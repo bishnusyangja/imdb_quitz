@@ -8,6 +8,9 @@ class BaseView:
     def __init__(self, request):
         self.request = request
 
+    def check_permission(self):
+        return True, {}
+
     def get_queryset(self):
         return []
 
@@ -26,11 +29,17 @@ class BaseView:
         return make_response(jsonify(dict(error='Not Implemented')), 500)
 
     def get(self):
+        is_allowed, error = self.check_permission()
+        if not is_allowed:
+            return make_response(jsonify(error), 403)
         qs = self.get_queryset()
         data = [{key: item[key] for key in self.field_items} for item in qs]
         return make_response(jsonify(data), 200)
 
     def post(self):
+        is_allowed, error = self.check_permission()
+        if not is_allowed:
+            return make_response(jsonify(error), 403)
         data = self.request.json
         errors = self.validate_fields(data)
         if errors:
