@@ -2,9 +2,10 @@ from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import ForeignKey
 from sqlalchemy.orm import relationship
+from settings import DB_NAME, DB_PATH
 
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:////tmp/test.db'
+app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///{DB_PATH}{DB_NAME}'
 db = SQLAlchemy(app)
 
 
@@ -39,7 +40,7 @@ class Quiz(db.Model):
         return f'{self.user_id}: {self.score}'
 
 
-class Question():
+class Question(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     content_id = db.Column(db.Integer, ForeignKey(ImbdContent.id), primary_key=True)
     quiz_id = db.Column(db.Integer, ForeignKey(Quiz.id))
@@ -51,27 +52,26 @@ class Question():
     answered = db.Column(db.String(10))
 
     content = relationship('ImbdContent', foreign_keys='Question.content_id')
-    quiz = relationship('Question', foreign_keys='Question.quiz_id')
+    quiz = relationship('Quiz', foreign_keys='Question.quiz_id')
 
     def __repr__(self):
         return f'{self.right_answer}: {self.answered}'
 
 
-
 db.create_all()
 
-admin = User(username='admin', email='admin@example.com')
-guest = User(username='guest', email='guest@example.com')
+admin = User(username='admin', name='admin@example.com')
+guest = User(username='guest', name='guest@example.com')
 
 db.session.add(admin)
 db.session.add(guest)
 db.session.commit()
 
-# s = db.session
-# objects = [
-#     User(username="u1"),
-#     User(username="u2"),
-#     User(username="u3")
-# ]
-# s.bulk_save_objects(objects)
-# s.commit()
+s = db.session
+objects = [
+    User(username="u1", name='Ram'),
+    User(username="u2", name='Shyam'),
+    User(username="u3", name='Hari')
+]
+s.bulk_save_objects(objects)
+s.commit()
