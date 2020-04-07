@@ -44,7 +44,7 @@ class WebScrapping:
         print('fetching winner content .....')
         url = f'{self.ROOT_URL}{url}'
         resp = requests.get(url)
-        bs = BeautifulSoup(resp.text, 'lxml')
+        bs = BeautifulSoup(resp.text, 'html.parser')
         js_scripts = bs.find_all('script')
 
         for i_script in js_scripts:
