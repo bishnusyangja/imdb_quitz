@@ -83,7 +83,7 @@ class WebScrapping:
                             if is_winner:
                                 winner = item
                             choices.append(item)
-                    data_dict['choices'] = choices
+                    data_dict['nominees'] = '<,>'.join(choices)
                     data_dict['winner'] = winner
                     data_list.append(data_dict)
         return data_list
@@ -106,8 +106,6 @@ def crawl_imdb_content():
     oscar_url, emmys_url = obj.fetch_oscar_emmy_url()
     oscar_data = data_for_oscar_award(obj, oscar_url)
     emmys_data = data_for_emmys_award(obj, emmys_url)
-    print(oscar_data[:10])
-    print(emmys_data[:10])
+    oscar_data.extend(emmys_data)
+    return oscar_data
 
-
-crawl_imdb_content()

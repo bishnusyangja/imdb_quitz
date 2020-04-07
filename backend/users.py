@@ -1,12 +1,17 @@
 from flask import request, make_response, jsonify
+from models import db, User
+
+
+def truncate_line(line):
+    return line.replace('\n').strip()
 
 
 def validate_user_code(user_code):
     file_path='code_files.txt'
-    # todo: validate user codes
     with open(file_path, 'r') as fp:
-        fp.read()
-    return True
+        content = fp.readlines()
+        content = [truncate_line(line) for line in content]
+        return user_code.strip() in content
 
 
 def validate_fields(username, user_code, name):
@@ -21,7 +26,9 @@ def validate_fields(username, user_code, name):
 
 
 def create_user(username, name):
-    pass
+    data = dict(username=username, name=name)
+    db.session.add(User(**data))
+    db.session.commit()
 
 
 def user_registration():
@@ -29,11 +36,15 @@ def user_registration():
     username = data.get('username')
     user_code = data.get('code')
     name = data.get('name')
-    if validate_fields(username, user_code, name):
-        return make_response(jsonify({'error': 'username, user_code and name is required'}), 400)
+    errors = validate_fields(username, user_code, name)
+    if errors:
+        return make_response(jsonify(errors), 400)
     if not validate_user_code(user_code):
-        return make_response(jsonify({'error': 'username, user_code and name is required'}), 400)
+        return make_response(jsonify({'code': 'the code you have provided is not valid'}), 400)
     create_user(username, name)
     status = 201
     response = {}
     return make_response(jsonify(response), status)
+
+
+validate_user_code('')

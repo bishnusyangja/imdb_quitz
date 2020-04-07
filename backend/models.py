@@ -18,7 +18,7 @@ class User(db.Model):
         return f'{self.username}: {self.name}'
 
 
-class ImbdContent(db.Model):
+class ImdbContent(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     award = db.Column(db.String(20), nullable=False)
     category = db.Column(db.String(100), nullable=False)
@@ -42,7 +42,7 @@ class Quiz(db.Model):
 
 class Question(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    content_id = db.Column(db.Integer, ForeignKey(ImbdContent.id), primary_key=True)
+    content_id = db.Column(db.Integer, ForeignKey(ImdbContent.id), primary_key=True)
     quiz_id = db.Column(db.Integer, ForeignKey(Quiz.id))
     option1 = db.Column(db.String(150), nullable=False)
     option2 = db.Column(db.String(150), nullable=False)
@@ -51,27 +51,9 @@ class Question(db.Model):
     right_answer = db.Column(db.String(10), nullable=False)
     answered = db.Column(db.String(10))
 
-    content = relationship('ImbdContent', foreign_keys='Question.content_id')
+    content = relationship('ImdbContent', foreign_keys='Question.content_id')
     quiz = relationship('Quiz', foreign_keys='Question.quiz_id')
 
     def __repr__(self):
         return f'{self.right_answer}: {self.answered}'
 
-
-db.create_all()
-
-admin = User(username='admin', name='admin@example.com')
-guest = User(username='guest', name='guest@example.com')
-
-db.session.add(admin)
-db.session.add(guest)
-db.session.commit()
-
-s = db.session
-objects = [
-    User(username="u1", name='Ram'),
-    User(username="u2", name='Shyam'),
-    User(username="u3", name='Hari')
-]
-s.bulk_save_objects(objects)
-s.commit()
