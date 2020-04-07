@@ -1,7 +1,5 @@
 import random
-
 from flask import request, make_response, jsonify
-
 from models import Quiz, Question, ImdbContent, db
 from views import BaseView
 
@@ -51,10 +49,18 @@ class QuizView(BaseView):
         quiz_attempted = Quiz.objects.filter(user_id=user_id).count()
         return quiz_attempted
 
-    def after_validation(self, data):
+    def evaluate_quiz(self, quiz_id):
         score = 5
-        return make_response(jsonify(dict(score=score)), 200)
+        return score
 
+    def save_score_on_quiz(self):
+        pass
+
+    def after_validation(self, data):
+        quiz_id = data.get('id')
+        score = self.evaluate_quiz(quiz_id)
+        self.save_score_on_quiz()
+        return make_response(jsonify(dict(score=score)), 200)
 
 
 class ScoreView(BaseView):

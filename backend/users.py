@@ -1,10 +1,8 @@
 from flask import request, make_response, jsonify
+
+from helpers import truncate_line
 from models import db, User
 from views import BaseView
-
-
-def truncate_line(line):
-    return line.replace('\n').strip()
 
 
 class UserRegistrationView(BaseView):
