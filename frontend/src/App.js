@@ -4,17 +4,19 @@ import { Form, Icon, Input, Button, Checkbox } from 'antd';
 import './App.css';
 import 'antd/dist/antd.css'
 import { Row, Col } from 'antd';
+import Request from './api'
+
 
 function App() {
   let auth_token = localStorage.getItem('auth_token', '')
   const [isLoggedin, setIsLoggedin]=useState(false);
 
   const handleLogin = () => {
-    console.log("submitted")
+    console.log("Log in")
   }
 
   const handleRegister = () => {
-
+    console.log("register")
   }
 
   const login_form = () => {
