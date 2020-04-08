@@ -1,9 +1,13 @@
 from flask import make_response, jsonify
 
+from settings import DEFAULT_PAGE_SIZE
+
 
 class BaseView:
 
     field_items = ()
+    page_size = DEFAULT_PAGE_SIZE
+    page = 1
 
     def __init__(self, request):
         self.user = request.environ.get('IMDB_USER')

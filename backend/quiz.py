@@ -118,8 +118,20 @@ class QuizView(BaseView):
 class ScoreView(BaseView):
     field_items = ()
 
+    def get_query_limit(self):
+        page = self.request.args.get('page') or self.page
+        page_size = self.request.args.get('page_size') or self.page_size
+        start = (page - 1) * page_size
+        end = page_size * page
+        return start, end
+
+    def get_paginated_query(self, qs):
+        start, end = self.get_query_limit()
+        return qs[start, end]
+
     def get_queryset(self):
         qs = Quiz.objects.all()
+        qs = self.get_paginated_query(qs)
         return qs
 
 
