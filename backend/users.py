@@ -1,4 +1,5 @@
 from flask import request, make_response, jsonify
+from flask_cors import cross_origin
 
 from helpers import truncate_line, get_random_string
 from models import db, User, UserToken
@@ -87,6 +88,8 @@ def user_registration():
     return view.get_response()
 
 
+@cross_origin(origin='localhost', headers=['Content-Type', 'Authorization'])
+# origin='localhost',headers=['Content- Type','Authorization']
 def api_auth_token():
     view = ApiAuthView(request)
     return view.get_response()

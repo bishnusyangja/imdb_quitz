@@ -23,8 +23,8 @@ function App() {
     else
         return (
           <Row>
-              <Col span={10} > <LoginForm isLoggedin={isLoggedin}/> </Col>
-              <Col span={14} > <RegisterForm isLoggedin={isLoggedin}/> </Col>
+              <Col span={10} > <LoginForm setIsLoggedin={setIsLoggedin} /> </Col>
+              <Col span={14} > <RegisterForm /> </Col>
           </Row>
     );
 
