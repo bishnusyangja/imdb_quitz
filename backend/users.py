@@ -88,8 +88,7 @@ def user_registration():
     return view.get_response()
 
 
-@cross_origin(origin='localhost', headers=['Content-Type', 'Authorization'])
-# origin='localhost',headers=['Content- Type','Authorization']
+@cross_origin(origin='http://localhost', headers=['Content-Type', 'Authorization'])
 def api_auth_token():
     view = ApiAuthView(request)
     return view.get_response()
