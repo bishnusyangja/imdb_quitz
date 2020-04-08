@@ -1,21 +1,63 @@
 import random
 from flask import request, make_response, jsonify
 from models import Quiz, Question, ImdbContent, db
+from settings import NOMINEES_SPLIT
 from views import BaseView
 
 
 class QuizView(BaseView):
     field_items = ()
 
+    def __init__(self, request, **kwargs):
+        super().__init__(request)
+        self.quiz_id = kwargs.get('quiz_id')
+
     def check_permission(self):
         quiz_attempted = self.get_quiz_attempted()
         if quiz_attempted >= 1:
             error = {'error': 'Only one quiz can be attempted by a user'}
             return False, error
+        try:
+            quiz = Quiz.objects.get(id=self.quiz_id)
+        except Exception as exc:
+            error = {'error': 'No quiz found'}
+            return False, error
+        else:
+            if not quiz.user_id == self.user.id:
+                error = {'error': 'You have no permission to attempt this quiz'}
+                return False, error
         return True, {}
 
+    def get_question_text(self, content):
+        return f"Which of the following is awarded as {content.category} in {content.award} award?"
+
+    def get_options(self, content, right_number=None):
+        options = random.sample(content.nominees.replace(content.winner, '').strip(NOMINEES_SPLIT).replace(
+            NOMINEES_SPLIT*2, NOMINEES_SPLIT).split(NOMINEES_SPLIT), 3)
+        params = {}
+        right_number = random.choice(range(4)) + 1 if right_number is None else right_number
+        right_assigned = False
+        right_option = ''
+        for i in range(3):
+            if i+1 == right_number:
+                right_option = f'option{right_number}'
+                params[right_option] = content.winner
+                right_assigned = True
+            else:
+                index = i+1 if right_assigned else i+2
+                params[f'option{index}'] = options[index-1]
+        params['right_answer'] = right_option
+        return params
+
     def get_question_obj(self, content, quiz_id):
-        obj = Question()
+        # content_id, quiz_id, option14, right_answer, question
+        obj = Question(content_id=content.id,
+                       quiz_id=quiz_id,
+                       question=self.get_question_text(content),
+                       **self.get_options(content)
+                       )
+        db.session.add(obj)
+        db.session.commit()
         return obj
 
     def get_quiz_id(self):
@@ -39,7 +81,7 @@ class QuizView(BaseView):
         for content in qs:
             questions.append(self.get_question_obj(content, quiz_id))
         self.bulk_create_questions(questions)
-        return []
+        return questions
 
     def get_queryset(self):
         return self.get_question_list()
@@ -49,17 +91,27 @@ class QuizView(BaseView):
         quiz_attempted = Quiz.objects.filter(user_id=user_id).count()
         return quiz_attempted
 
-    def evaluate_quiz(self, quiz_id):
-        score = 5
+    def evaluate_quiz(self, quiz):
+        score = 0
+        qs = Question.objects.filter(quiz_id=self.quiz_id).values('id', 'right_answer')
+        ans_dict = {item['id']: item['right_answer'] for item in qs}
+        for question in quiz:
+            ques = question.get('question')
+            ans = question.get('answer')
+            if ans and ans_dict.get(ques) == ans:
+                score += 1
         return score
 
-    def save_score_on_quiz(self):
-        pass
+    def save_score_on_quiz(self, score):
+        obj = Quiz.objects.get(id=self.quiz_id)
+        obj.score = score
+        db.session.add(obj)
+        db.session.commit()
 
     def after_validation(self, data):
-        quiz_id = data.get('id')
-        score = self.evaluate_quiz(quiz_id)
-        self.save_score_on_quiz()
+        quiz = data.get('quiz')
+        score = self.evaluate_quiz(quiz)
+        self.save_score_on_quiz(score)
         return make_response(jsonify(dict(score=score)), 200)
 
 
@@ -76,6 +128,6 @@ def score_view():
     return obj.get_response()
 
 
-def quiz_view():
-    obj = QuizView(request)
+def quiz_view(quiz_id=None):
+    obj = QuizView(request, quiz_id=quiz_id)
     return obj.get_response()

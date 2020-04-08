@@ -4,6 +4,8 @@ import re
 import requests
 from bs4 import BeautifulSoup
 
+from settings import NOMINEES_SPLIT
+
 ROOT_URL = 'https://imdb.com'
 
 
@@ -83,7 +85,7 @@ class WebScrapping:
                             if is_winner:
                                 winner = item
                             choices.append(item)
-                    data_dict['nominees'] = '<,>'.join(choices)
+                    data_dict['nominees'] = NOMINEES_SPLIT.join(choices)
                     data_dict['winner'] = winner
                     data_list.append(data_dict)
         return data_list

@@ -63,13 +63,14 @@ class Quiz(db.Model):
 class Question(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     content_id = db.Column(db.Integer, ForeignKey(ImdbContent.id), primary_key=True)
+    question = db.Column(db.Text)
     quiz_id = db.Column(db.Integer, ForeignKey(Quiz.id))
     option1 = db.Column(db.String(150), nullable=False)
     option2 = db.Column(db.String(150), nullable=False)
     option3 = db.Column(db.String(150), nullable=False)
     option4 = db.Column(db.String(150), nullable=False)
     right_answer = db.Column(db.String(10), nullable=False)
-    answered = db.Column(db.String(10))
+    answered = db.Column(db.String(10), nullable=True)
 
     content = relationship('ImdbContent', foreign_keys='Question.content_id')
     quiz = relationship('Quiz', foreign_keys='Question.quiz_id')
