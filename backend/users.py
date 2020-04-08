@@ -32,7 +32,7 @@ class UserRegistrationView(BaseView):
     def after_validation(self, data):
         self.create_user(data['username'], data['name'], data['password'])
         status = 201
-        response = {}
+        response = {'username': data['username'], 'name': data['name']}
         return make_response(jsonify(response), status)
 
     def create_user(self, username, name, password):

@@ -5,8 +5,9 @@ from models import Quiz, Question, ImdbContent, db
 from settings import NOMINEES_SPLIT
 from views import BaseView
 
+
 class QuizView(BaseView):
-    field_items = ()
+    field_items = ('question', 'option1', 'option2', 'option3', 'option4',)
 
     def __init__(self, request, **kwargs):
         super().__init__(request)
@@ -116,7 +117,7 @@ class QuizView(BaseView):
 
 
 class ScoreView(BaseView):
-    field_items = ()
+    field_items = ('user_id', 'score', )
 
     def get_query_limit(self):
         page = self.request.args.get('page') or self.page
