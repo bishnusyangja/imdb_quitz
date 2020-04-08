@@ -9,6 +9,10 @@ app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///{DB_PATH}{DB_NAME}'
 db = SQLAlchemy(app)
 
 
+class Anonymous:
+    pass
+
+
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(80), unique=True, nullable=False)
@@ -16,6 +20,13 @@ class User(db.Model):
 
     def __repr__(self):
         return f'{self.username}: {self.name}'
+
+
+class UserToken(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    token = db.Column(db.String(50), unique=True)
+    user_id = db.Column(db.Integer, ForeignKey(User.id), primary_key=True)
+    user = relationship('User', foreign_keys='Quiz.user_id')
 
 
 class ImdbContent(db.Model):

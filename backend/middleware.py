@@ -1,10 +1,15 @@
-from werkzeug.wrappers import Request, Response
+import json
+from werkzeug.wrappers import Response
+
+from helpers import append_slash
+from settings import LOGIN_URL, USER_REGISTRATION_URL
+from models import User, UserToken, Anonymous
 
 
-class BaseMiddleware():
-    '''
-    Simple WSGI middleware
-    '''
+class BaseMiddleware:
+    """
+    Base Middleware for our IMDB quiz system
+    """
 
     def __init__(self, app):
         self.app = app
@@ -14,24 +19,34 @@ class BaseMiddleware():
         return resp or self.app(environ, start_response)
 
     def process_request(self, request, start_response):
-        print("at base middleware")
         pass
 
 
-class LoginMiddleware(BaseMiddleware):
-    userName = ''
-    password = ''
+class LoginRequiredMiddleware(BaseMiddleware):
 
-    def process_request(self, request, start_response):
-        print("at login middleware")
-        request_obj = Request(request)
-        # userName = request_obj.authorization['username']
-        # password = request_obj.authorization['password']
-        return self.app(request, start_response)
+    def process_request(self, environ, start_response):
+        user = environ.get('IMDB_USER')
+        path = environ.get('PATH_INFO')
+        path = append_slash(path)
+        if path == LOGIN_URL or path == USER_REGISTRATION_URL or type(user) == User:
+            return self.app(environ, start_response)
+        else:
+            Response(json.dumps({'Authorization failed'}), mimetype='application/json', status=401)
 
-        # if userName == self.userName and password == self.password:
-        #     request['user'] = {'name': 'Ram'}
-        #     return self.app(request, start_response)
-        # else:
-        #     res = Response(u'Authorization failed', mimetype='text/plain', status=401)
-        #     return res(request, start_response)
+
+class AuthenticationMiddleWare(BaseMiddleware):
+
+    def get_user_from_token(self, token):
+        try:
+            token = UserToken.objects.get(token=token)
+            user = token.user
+        except Exception as exc:
+            print("LoginExc", exc)
+            user = Anonymous()
+        return user
+
+    def process_request(self, environ, start_response):
+        authorization = environ.get('HTTP_AUTHORIZATION')
+        token = authorization.split()[1]
+        environ['IMDB_USER'] = self.get_user_from_token(token)
+        return self.app(environ, start_response)

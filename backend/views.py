@@ -6,6 +6,7 @@ class BaseView:
     field_items = ()
 
     def __init__(self, request):
+        self.user = request.environ.get('IMDB_USER')
         self.request = request
 
     def check_permission(self):

@@ -39,5 +39,6 @@ class UserRegistrationView(BaseView):
 
 
 def user_registration():
+
     view = BaseView(request)
     return view.get_response()
