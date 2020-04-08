@@ -47,7 +47,10 @@ class ApiAuthView(BaseView):
 
     def get_user_obj(self, username):
         try:
-            user = User.objects.get(username=username)
+            obj = User.query.filter_by(username=username)
+            if len(obj) > 1:
+                user = None
+            user = user[0]
         except Exception as e:
             user = None
         return user
@@ -66,7 +69,7 @@ class ApiAuthView(BaseView):
 
     def get_auth_token(self):
         try:
-            obj = UserToken.objects.get(user_id=self.user.id)
+            obj = UserToken.query.filter_by(user_id=self.user.id)[0]
         except UserToken.DoesNotExist:
             obj = UserToken(user_id=self.user.id, token=get_random_string())
         db.session.add(obj)

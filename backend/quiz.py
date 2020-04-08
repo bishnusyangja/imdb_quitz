@@ -1,9 +1,9 @@
 import random
+from sqlalchemy import desc
 from flask import request, make_response, jsonify
 from models import Quiz, Question, ImdbContent, db
 from settings import NOMINEES_SPLIT
 from views import BaseView
-
 
 class QuizView(BaseView):
     field_items = ()
@@ -18,7 +18,7 @@ class QuizView(BaseView):
             error = {'error': 'Only one quiz can be attempted by a user'}
             return False, error
         try:
-            quiz = Quiz.objects.get(id=self.quiz_id)
+            quiz = Quiz.query.get(self.quiz_id)
         except Exception as exc:
             error = {'error': 'No quiz found'}
             return False, error
@@ -50,7 +50,6 @@ class QuizView(BaseView):
         return params
 
     def get_question_obj(self, content, quiz_id):
-        # content_id, quiz_id, option14, right_answer, question
         obj = Question(content_id=content.id,
                        quiz_id=quiz_id,
                        question=self.get_question_text(content),
@@ -73,9 +72,10 @@ class QuizView(BaseView):
         s.commit()
 
     def get_question_list(self):
-        count = ImdbContent.objects.all().count()
+        count = ImdbContent.query.count()
         samples = random.sample(range(count), 10)
-        qs = ImdbContent.objects.filter(id__in=samples)
+        samples = [i+1 for i in samples]
+        qs = ImdbContent.query.filter(ImdbContent.id.in_(samples))
         questions = []
         quiz_id = self.get_quiz_id()
         for content in qs:
@@ -88,12 +88,12 @@ class QuizView(BaseView):
 
     def get_quiz_attempted(self):
         user_id = None
-        quiz_attempted = Quiz.objects.filter(user_id=user_id).count()
+        quiz_attempted = Quiz.query.filter_by(user_id=user_id).count()
         return quiz_attempted
 
     def evaluate_quiz(self, quiz):
         score = 0
-        qs = Question.objects.filter(quiz_id=self.quiz_id).values('id', 'right_answer')
+        qs = Question.query.filter_by(quiz_id=self.quiz_id).all()
         ans_dict = {item['id']: item['right_answer'] for item in qs}
         for question in quiz:
             ques = question.get('question')
@@ -103,7 +103,7 @@ class QuizView(BaseView):
         return score
 
     def save_score_on_quiz(self, score):
-        obj = Quiz.objects.get(id=self.quiz_id)
+        obj = Quiz.query.get(self.quiz_id)
         obj.score = score
         db.session.add(obj)
         db.session.commit()
@@ -130,7 +130,7 @@ class ScoreView(BaseView):
         return qs[start, end]
 
     def get_queryset(self):
-        qs = Quiz.objects.all()
+        qs = Quiz.query.all().order_by(desc(Quiz.score))
         qs = self.get_paginated_query(qs)
         return qs
 

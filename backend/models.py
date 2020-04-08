@@ -35,7 +35,7 @@ class UserToken(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     token = db.Column(db.String(50), unique=True)
     user_id = db.Column(db.Integer, ForeignKey(User.id), primary_key=True)
-    user = relationship('User', foreign_keys='Quiz.user_id')
+    user = relationship('User', foreign_keys='UserToken.user_id')
 
 
 class ImdbContent(db.Model):
