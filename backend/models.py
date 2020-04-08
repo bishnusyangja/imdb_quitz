@@ -2,6 +2,8 @@ from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import ForeignKey
 from sqlalchemy.orm import relationship
+
+from helpers import get_hash_passwd
 from settings import DB_NAME, DB_PATH
 
 app = Flask(__name__)
@@ -17,9 +19,16 @@ class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(80), unique=True, nullable=False)
     name = db.Column(db.String(120), nullable=False)
+    password = db.Column(db.String(200), nullable=False)
 
     def __repr__(self):
         return f'{self.username}: {self.name}'
+
+    def set_password(self, password):
+        self.password = get_hash_passwd(password)
+
+    def check_password(self, password):
+        return self.password == get_hash_passwd(password)
 
 
 class UserToken(db.Model):

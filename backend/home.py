@@ -1,7 +1,5 @@
-from flask import request, session
 
+
+# just a home page
 def home():
-    print(request)
-    # print(session['item'], 'session item is here')
-    import pdb; pdb.set_trace()
-    return "Hello World"
+    return "Welcome to IMDB Quiz"
