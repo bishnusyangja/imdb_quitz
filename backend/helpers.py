@@ -10,7 +10,7 @@ def get_random_string(chars=22):
 
 
 def truncate_line(line):
-    return line.replace('\n').strip()
+    return line.replace('\n', '').strip()
 
 
 def append_slash(path):

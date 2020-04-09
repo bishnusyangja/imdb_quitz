@@ -13,7 +13,7 @@ class UserRegistrationView(BaseView):
             errors['username'] = 'username is required'
         if not data.get('name'):
             errors['name'] = 'name is required'
-        if not data.get('user'):
+        if not data.get('code'):
             errors['code'] = 'code is required'
         elif not self.validate_user_code(data.get('code')):
             errors['code'] = 'The code you submitted is not valid'

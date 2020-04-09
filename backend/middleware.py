@@ -1,4 +1,6 @@
 import json
+
+from flask_cors import CORS
 from werkzeug.wrappers import Response
 
 from helpers import append_slash
@@ -31,7 +33,8 @@ class LoginRequiredMiddleware(BaseMiddleware):
         if path == LOGIN_URL or path == USER_REGISTRATION_URL or type(user) == User:
             return self.app(environ, start_response)
         else:
-            Response(json.dumps({'Authorization failed'}), mimetype='application/json', status=401)
+            resp = Response(json.dumps({'error': 'Authentication failed'}), mimetype='application/json', status=401)
+            return resp(environ, start_response)
 
 
 class AuthenticationMiddleWare(BaseMiddleware):
