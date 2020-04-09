@@ -1,4 +1,4 @@
 
 export const environment = {
-    REACT_APP_BACKEND_HOST: 'localhost:5000'
+    REACT_APP_BACKEND_HOST: 'http://localhost:5000'
 }

@@ -1,5 +1,4 @@
 from flask import request, make_response, jsonify
-from flask_cors import cross_origin
 
 from helpers import truncate_line, get_random_string
 from models import db, User, UserToken
@@ -48,11 +47,8 @@ class ApiAuthView(BaseView):
 
     def get_user_obj(self, username):
         try:
-            obj = User.query.filter_by(username=username)
-            if len(obj) > 1:
-                user = None
-            user = user[0]
-        except Exception as e:
+            user = User.query.filter_by(username=username)[0]
+        except Exception as exc:
             user = None
         return user
 
@@ -88,7 +84,6 @@ def user_registration():
     return view.get_response()
 
 
-@cross_origin(origin='http://localhost', headers=['Content-Type', 'Authorization'])
 def api_auth_token():
     view = ApiAuthView(request)
     return view.get_response()

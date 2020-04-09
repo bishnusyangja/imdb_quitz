@@ -38,7 +38,7 @@ class AuthenticationMiddleWare(BaseMiddleware):
 
     def get_user_from_token(self, token):
         try:
-            token = UserToken.objects.get(token=token)
+            token = UserToken.query.filter_by(token=token)[0]
             user = token.user
         except Exception as exc:
             print("LoginExc", exc)
@@ -46,7 +46,8 @@ class AuthenticationMiddleWare(BaseMiddleware):
         return user
 
     def process_request(self, environ, start_response):
+        anonymous = Anonymous()
         authorization = environ.get('HTTP_AUTHORIZATION')
-        token = authorization.split()[1]
-        environ['IMDB_USER'] = self.get_user_from_token(token)
+        token = authorization.split()[1] if authorization else ''
+        environ['IMDB_USER'] = self.get_user_from_token(token) if token else anonymous
         return self.app(environ, start_response)

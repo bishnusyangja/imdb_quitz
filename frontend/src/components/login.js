@@ -9,8 +9,6 @@ import Request from '../api'
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        console.log("submited");
-        console.log("form data", form)
         Request.post('/api/auth-token/', form)
         .then(function (response) {
             setIsLoggedin({status: true});
