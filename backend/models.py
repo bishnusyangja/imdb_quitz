@@ -3,7 +3,7 @@ from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import ForeignKey
 from sqlalchemy.orm import relationship
 
-from helpers import get_hash_passwd
+from helpers import hash_password, verify_password
 from settings import DB_NAME, DB_PATH
 
 app = Flask(__name__)
@@ -25,10 +25,10 @@ class User(db.Model):
         return f'{self.username}: {self.name}'
 
     def set_password(self, password):
-        self.password = get_hash_passwd(password)
+        self.password = hash_password(password)
 
     def check_password(self, password):
-        return self.password == get_hash_passwd(password)
+        return self.password == verify_password(password)
 
 
 class UserToken(db.Model):
