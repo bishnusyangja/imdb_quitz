@@ -7,7 +7,7 @@ from views import BaseView
 
 
 class QuizView(BaseView):
-    field_items = ('question', 'option1', 'option2', 'option3', 'option4',)
+    field_items = ('question', 'option1', 'option2', 'option3', 'option4', 'quiz_id', )
 
     def __init__(self, request, **kwargs):
         super().__init__(request)
@@ -142,5 +142,6 @@ def score_view():
 
 
 def quiz_view(quiz_id=None):
+    print("at quiz view")
     obj = QuizView(request, quiz_id=quiz_id)
     return obj.get_response()

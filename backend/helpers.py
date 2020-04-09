@@ -3,7 +3,10 @@ import hashlib
 import os
 import random
 import string
-import bcrypt
+
+
+class Anonymous:
+    pass
 
 
 def get_random_string(chars=22):
@@ -38,6 +41,4 @@ def verify_password(stored_password, provided_password):
                                   salt.encode('ascii'),
                                   100000)
     pwdhash = binascii.hexlify(pwdhash).decode('ascii')
-    print(pwdhash)
-    print(stored_password)
     return pwdhash == stored_password

@@ -13,10 +13,6 @@ app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///{DB_PATH}{DB_NAME}'
 db = SQLAlchemy(app)
 
 
-class Anonymous:
-    pass
-
-
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(80), unique=True, nullable=False)
@@ -34,7 +30,7 @@ class User(db.Model):
 
 
 class UserToken(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
+    # id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     token = db.Column(db.String(50), unique=True)
     user_id = db.Column(db.Integer, ForeignKey(User.id), primary_key=True)
 

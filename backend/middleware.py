@@ -1,11 +1,10 @@
 import json
 
-from flask_cors import CORS
 from werkzeug.wrappers import Response
 
 from helpers import append_slash
 from settings import LOGIN_URL, USER_REGISTRATION_URL
-from models import User, UserToken, Anonymous
+from helpers import Anonymous
 
 
 class BaseMiddleware:
@@ -27,6 +26,8 @@ class BaseMiddleware:
 class LoginRequiredMiddleware(BaseMiddleware):
 
     def process_request(self, environ, start_response):
+        print("Login Middleware")
+        from models import User
         user = environ.get('IMDB_USER')
         path = environ.get('PATH_INFO')
         path = append_slash(path)
@@ -40,6 +41,7 @@ class LoginRequiredMiddleware(BaseMiddleware):
 class AuthenticationMiddleWare(BaseMiddleware):
 
     def get_user_from_token(self, token):
+        from models import UserToken
         try:
             token = UserToken.query.filter_by(token=token)[0]
             user = token.user
@@ -49,6 +51,7 @@ class AuthenticationMiddleWare(BaseMiddleware):
         return user
 
     def process_request(self, environ, start_response):
+        print("Authentication Middleware")
         anonymous = Anonymous()
         authorization = environ.get('HTTP_AUTHORIZATION')
         token = authorization.split()[1] if authorization else ''
