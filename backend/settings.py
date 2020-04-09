@@ -1,4 +1,4 @@
-DB_PATH = '/home/bishnu/'
+DB_PATH = '/home/bishnu/www/'
 DB_NAME = 'imdb_quiz.db'
 
 LOGIN_URL = '/api/auth-token/'

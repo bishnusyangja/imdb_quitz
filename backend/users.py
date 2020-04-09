@@ -55,22 +55,25 @@ class ApiAuthView(BaseView):
     def validate_fields(self, data):
         errors = {}
         username = data.get('username')
-        user = self.get_user_obj(username)
-        if user is None:
+        self.user = self.get_user_obj(username)
+        if self.user is None:
             errors['user'] = 'Username or password doesnot match'
         else:
             password = data.get('password')
-            if not user.check_password(password):
+            if not self.user.check_password(password):
                 errors['user'] = 'Username or password doesnot match'
         return errors
 
     def get_auth_token(self):
         try:
             obj = UserToken.query.filter_by(user_id=self.user.id)[0]
-        except UserToken.DoesNotExist:
-            obj = UserToken(user_id=self.user.id, token=get_random_string())
-        db.session.add(obj)
-        db.session.commit()
+            print('...getting old token')
+        except Exception as exc:
+            print('..new token created')
+            data = dict(user_id=self.user.id, token=get_random_string())
+            obj = UserToken(**data)
+            db.session.add(obj)
+            db.session.commit()
         return obj.token
 
     def after_validation(self, data):

@@ -1,4 +1,5 @@
-import pdb
 from models import *
 
-pdb.set_trace()
+tok = UserToken(user_id=1, token='anfjaf')
+db.session.add(tok)
+db.session.commit()

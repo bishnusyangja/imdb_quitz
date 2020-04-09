@@ -1,12 +1,14 @@
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
+
 from sqlalchemy import ForeignKey
 from sqlalchemy.orm import relationship
 
+from app import get_core_app
 from helpers import hash_password, verify_password
 from settings import DB_NAME, DB_PATH
 
-app = Flask(__name__)
+app = get_core_app()
 app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///{DB_PATH}{DB_NAME}'
 db = SQLAlchemy(app)
 
@@ -28,14 +30,18 @@ class User(db.Model):
         self.password = hash_password(password)
 
     def check_password(self, password):
-        return self.password == verify_password(password)
+        return verify_password(self.password, password)
 
 
 class UserToken(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     token = db.Column(db.String(50), unique=True)
     user_id = db.Column(db.Integer, ForeignKey(User.id), primary_key=True)
+
     user = relationship('User', foreign_keys='UserToken.user_id')
+
+    def __repr__(self):
+        return f'{self.id} {self.token}'
 
 
 class ImdbContent(db.Model):
@@ -50,7 +56,7 @@ class ImdbContent(db.Model):
 
 
 class Quiz(db.Model):
-    id = id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, ForeignKey(User.id), primary_key=True)
     score = db.Column(db.Integer, default=0)
 
