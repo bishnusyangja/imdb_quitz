@@ -15,7 +15,8 @@ import Request from '../api'
             localStorage.setItem('authToken', response.data.token)
           })
           .catch(function (error) {
-            console.log(error.response.data)
+              console.log('error');
+//            console.log(error.response)
           })
           .finally(function () {
             console.log('finally block')

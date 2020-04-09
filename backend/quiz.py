@@ -142,6 +142,5 @@ def score_view():
 
 
 def quiz_view(quiz_id=None):
-    print("at quiz view")
     obj = QuizView(request, quiz_id=quiz_id)
     return obj.get_response()

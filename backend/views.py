@@ -36,18 +36,26 @@ class BaseView:
     def get(self):
         is_allowed, error = self.check_permission()
         if not is_allowed:
-            return make_response(jsonify(error), 403)
-        qs = self.get_queryset()
-        data = [{key: item[key] for key in self.field_items} for item in qs]
-        return make_response(jsonify(data), 200)
+            response = make_response(jsonify(error), 403)
+        else:
+            qs = self.get_queryset()
+            data = [{key: item[key] for key in self.field_items} for item in qs]
+            response = make_response(jsonify(data), 200)
+        # response.headers.add('Access-Control-Allow-Origin', 'http://localhost:3000')
+        # response.headers.add('Access-Control-Allow-Credentials', True)
+        return response
 
     def post(self):
         is_allowed, error = self.check_permission()
         if not is_allowed:
-            return make_response(jsonify(error), 403)
-        data = self.request.json
-        errors = self.validate_fields(data)
-        if errors:
-            return make_response(jsonify(errors), 400)
+            response = make_response(jsonify(error), 403)
         else:
-            return self.after_validation(data)
+            data = self.request.json
+            errors = self.validate_fields(data)
+            if errors:
+                response = make_response(jsonify(errors), 400)
+            else:
+                response = self.after_validation(data)
+        # response.headers.add('Access-Control-Allow-Origin', 'http://localhost:3000')
+        # response.headers.add('Access-Control-Allow-Credentials', True)
+        return response

@@ -31,6 +31,7 @@ class LoginRequiredMiddleware(BaseMiddleware):
         user = environ.get('IMDB_USER')
         path = environ.get('PATH_INFO')
         path = append_slash(path)
+
         if path == LOGIN_URL or path == USER_REGISTRATION_URL or type(user) == User:
             return self.app(environ, start_response)
         else:

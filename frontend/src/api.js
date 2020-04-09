@@ -2,8 +2,6 @@ import axios from 'axios'
 import {environment} from './settings'
 const base_url = environment.REACT_APP_BACKEND_HOST
 axios.defaults.baseURL = base_url
-axios.defaults.crossDomain = true
-axios.defaults.headers.common['Content-Type'] = 'application/json'
 
 
 const getRequestObject = () => {
@@ -11,10 +9,8 @@ const getRequestObject = () => {
     if (authToken != null && authToken != ''){
         axios.defaults.headers.common['Authorization'] = `Token ${authToken}`;
         axios.defaults.headers.common['Access-Control-Allow-Origin'] = '*';
-        axios.defaults.headers.common['Access-Control-Allow-Methods'] = '*';
     }
     return axios;
-
 }
 
 export default Request = {
