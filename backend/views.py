@@ -46,7 +46,6 @@ class BaseView:
         if not is_allowed:
             return make_response(jsonify(error), 403)
         data = self.request.json
-        print(data)
         errors = self.validate_fields(data)
         if errors:
             return make_response(jsonify(errors), 400)
