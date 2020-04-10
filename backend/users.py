@@ -49,6 +49,7 @@ class ApiAuthView(BaseView):
         try:
             user = User.query.filter_by(username=username)[0]
         except Exception as exc:
+            print("userExcep", exc)
             user = None
         return user
 
@@ -71,6 +72,7 @@ class ApiAuthView(BaseView):
         except Exception as exc:
             print('..new token created')
             data = dict(user_id=self.user.id, token=get_random_string())
+            db.session.expire_all()
             obj = UserToken(**data)
             db.session.add(obj)
             db.session.commit()
@@ -85,12 +87,10 @@ class ApiAuthView(BaseView):
 def user_registration():
     view = UserRegistrationView(request)
     response = view.get_response()
-    print("printing headers ....\n\n", response.headers)
     return response
 
 
 def api_auth_token():
     view = ApiAuthView(request)
     response = view.get_response()
-    print("printing headers ....\n\n", response.headers)
     return response

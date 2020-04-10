@@ -13,11 +13,7 @@ class QuizView(BaseView):
         super().__init__(request)
         self.quiz_id = kwargs.get('quiz_id')
 
-    def check_permission(self):
-        quiz_attempted = self.get_quiz_attempted()
-        if quiz_attempted >= 1:
-            error = {'error': 'Only one quiz can be attempted by a user'}
-            return False, error
+    def permission_for_post(self):
         try:
             print(self.quiz_id)
             quiz = Quiz.query.get(self.quiz_id)
@@ -30,6 +26,19 @@ class QuizView(BaseView):
                 error = {'error': 'You have no permission to attempt this quiz'}
                 return False, error
         return True, {}
+
+    def permission_for_get(self):
+        quiz_attempted = self.get_quiz_attempted()
+        if quiz_attempted >= 1:
+            error = {'error': 'Only one quiz can be attempted by a user'}
+            return False, error
+        return True, {}
+
+    def check_permission(self):
+        if self.request.method.lower() == 'get':
+            return self.permission_for_get()
+        if self.request.method.lower() == 'post':
+            return self.permission_for_post()
 
     def get_question_text(self, content):
         return f"Which of the following is awarded as {content.category} in {content.award} award?"

@@ -40,7 +40,7 @@ const RegisterForm = () => {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        Request.post('/user/register/', form)
+        Request().post('/user/register/', form)
         .then(function (response) {
 //            localStorage.setItem('authToken', response.data.token)
             notify_success();

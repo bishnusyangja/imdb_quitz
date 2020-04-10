@@ -14,8 +14,7 @@ import Request from '../api'
     },[])
 
     const getQuiz = () => {
-        console.log("requesting quiz")
-        Request().get('/quiz/', {})
+        Request().get('/quiz/')
           .then(function (response) {
             console.log("success response at quiz, ", response.data)
             setState({data: response.data, start: state.start})
