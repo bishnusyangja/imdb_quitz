@@ -84,9 +84,13 @@ class ApiAuthView(BaseView):
 
 def user_registration():
     view = UserRegistrationView(request)
-    return view.get_response()
+    response = view.get_response()
+    print("printing headers ....\n\n", response.headers)
+    return response
 
 
 def api_auth_token():
     view = ApiAuthView(request)
-    return view.get_response()
+    response = view.get_response()
+    print("printing headers ....\n\n", response.headers)
+    return response

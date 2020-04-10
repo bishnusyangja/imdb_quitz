@@ -9,8 +9,7 @@ import Request from '../api'
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        Request.post('/api/auth-token/', form)
-        .then(function (response) {
+        Request().post('/api/auth-token/', form).then(function (response) {
             setIsLoggedin({status: true});
             localStorage.setItem('authToken', response.data.token)
           })

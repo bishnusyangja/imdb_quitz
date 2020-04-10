@@ -14,15 +14,17 @@ import Request from '../api'
     },[])
 
     const getQuiz = () => {
-        Request.get('/quiz/')
+        console.log("requesting quiz")
+        Request().get('/quiz/', {})
           .then(function (response) {
-            setState({data: response.data.results, start: state.start})
+            console.log("success response at quiz, ", response.data)
+            setState({data: response.data, start: state.start})
           })
           .catch(function (error) {
-            console.log(error)
+            console.log("error at quiz")
           })
           .finally(function () {
-            console.log('finally block')
+            console.log('finally block at quiz')
         });
     }
 

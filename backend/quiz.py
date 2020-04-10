@@ -19,8 +19,10 @@ class QuizView(BaseView):
             error = {'error': 'Only one quiz can be attempted by a user'}
             return False, error
         try:
+            print(self.quiz_id)
             quiz = Quiz.query.get(self.quiz_id)
         except Exception as exc:
+            print('GetQuizExc: ', exc)
             error = {'error': 'No quiz found'}
             return False, error
         else:

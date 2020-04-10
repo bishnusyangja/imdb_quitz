@@ -12,6 +12,7 @@ class BaseView:
     def __init__(self, request):
         self.user = request.environ.get('IMDB_USER')
         self.request = request
+        self.is_authenticated = request.environ.get('IMDB_AUTHENTICATION', False)
 
     def check_permission(self):
         return True, {}
@@ -20,6 +21,9 @@ class BaseView:
         return []
 
     def get_response(self):
+        if not self.is_authenticated:
+            errors = {'error': 'Authentication failed'}
+            return make_response(jsonify(errors), 401)
         if self.request.method == 'GET':
             return self.get()
         elif self.request.method == 'POST':
@@ -41,7 +45,7 @@ class BaseView:
             qs = self.get_queryset()
             data = [{key: item[key] for key in self.field_items} for item in qs]
             response = make_response(jsonify(data), 200)
-        # response.headers.add('Access-Control-Allow-Origin', 'http://localhost:3000')
+        # response.headers.add('Access-Control-Allow-Origin', '*')
         # response.headers.add('Access-Control-Allow-Credentials', True)
         return response
 
@@ -56,6 +60,6 @@ class BaseView:
                 response = make_response(jsonify(errors), 400)
             else:
                 response = self.after_validation(data)
-        # response.headers.add('Access-Control-Allow-Origin', 'http://localhost:3000')
+        # response.headers.add('Access-Control-Allow-Origin', '*')
         # response.headers.add('Access-Control-Allow-Credentials', True)
         return response
