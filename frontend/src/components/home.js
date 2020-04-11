@@ -26,7 +26,7 @@ import Request from '../api'
         getQuiz();
     }
 
-    const onOptionChange = () => {
+    const onOptionChange = (index) => {
         console.log("working");
     }
 
