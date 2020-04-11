@@ -1,16 +1,17 @@
 import random
 from sqlalchemy import desc
 from flask import request, make_response, jsonify
+
+from helpers import get_question_text, get_options_from_content
 from models import Quiz, Question, ImdbContent, db
-from settings import NOMINEES_SPLIT
 from views import BaseView
 
 
 class QuizView(BaseView):
     field_items = ('question', 'option1', 'option2', 'option3', 'option4', 'quiz_id', )
 
-    def __init__(self, request, **kwargs):
-        super().__init__(request)
+    def __init__(self, req, **kwargs):
+        super().__init__(req)
         self.quiz_id = kwargs.get('quiz_id')
         print('at quiz view', self.user.id)
 
@@ -30,8 +31,7 @@ class QuizView(BaseView):
 
     def permission_for_get(self):
         quiz_attempted = self.get_quiz_attempted()
-        quiz_attempted = 0 # for testing purpose
-        print('quiz attempted', quiz_attempted)
+        quiz_attempted = 0 # todo: for testing purpose will change later
         if quiz_attempted >= 1:
             error = {'error': 'Only one quiz can be attempted by a user'}
             return False, error
@@ -43,36 +43,13 @@ class QuizView(BaseView):
         if self.request.method.lower() == 'post':
             return self.permission_for_post()
 
-    def get_question_text(self, content):
-        return f"Which of the following is awarded as {content.category} in {content.award} award?"
-
-    def get_options(self, content, right_number=None):
-        try:
-            options = random.sample(content.nominees.replace(content.winner, '').strip(NOMINEES_SPLIT).replace(
-                NOMINEES_SPLIT * 2, NOMINEES_SPLIT).split(NOMINEES_SPLIT), 3)
-        except Exception as exc:
-            print('Excep', exc)
-            return None
-        right_number = random.choice(range(4)) + 1 if right_number is None else right_number
-        params = {f'option{right_number}': content.winner}
-        right_assigned = False
-        right_option = ''
-        for i in range(3):
-            if i + 1 == right_number:
-                right_assigned = True
-            index = i + 2 if right_assigned else i + 1
-            params[f'option{index}'] = options[i]
-        params['right_answer'] = right_option
-        return params
-
     def get_question_obj(self, content, quiz_id):
-        params = self.get_options(content)
+        params = get_options_from_content(content)
         if params:
             obj = Question(content_id=content.id,
                            quiz_id=quiz_id,
-                           question=self.get_question_text(content),
-                           **params
-                           )
+                           question=get_question_text(content),
+                           **params)
         else:
             obj = None
         return obj

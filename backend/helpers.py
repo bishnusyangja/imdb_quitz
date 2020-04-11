@@ -4,6 +4,8 @@ import os
 import random
 import string
 
+from settings import NOMINEES_SPLIT
+
 
 class Anonymous:
     pass
@@ -21,6 +23,30 @@ def truncate_line(line):
 
 def append_slash(path):
     return path if path[-1] == '/' else f'{path}/'
+
+
+def get_question_text(content):
+    return f"Which of the following is awarded as {content.category} in {content.award} award?"
+
+
+def get_options_from_content(content, right_number=None):
+    try:
+        options = random.sample(content.nominees.replace(content.winner, '').strip(NOMINEES_SPLIT).replace(
+            NOMINEES_SPLIT * 2, NOMINEES_SPLIT).split(NOMINEES_SPLIT), 3)
+    except Exception as exc:
+        print('Excep', exc)
+        return None
+    right_number = random.choice(range(4)) + 1 if right_number is None else right_number
+    params = {f'option{right_number}': content.winner}
+    right_assigned = False
+    right_option = ''
+    for i in range(3):
+        if i + 1 == right_number:
+            right_assigned = True
+        index = i + 2 if right_assigned else i + 1
+        params[f'option{index}'] = options[i]
+    params['right_answer'] = right_option
+    return params
 
 
 def hash_password(password):
