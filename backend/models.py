@@ -30,9 +30,9 @@ class User(db.Model):
 
 
 class UserToken(db.Model):
-    # id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    id = db.Column(db.Integer, primary_key=True)
     token = db.Column(db.String(50), unique=True)
-    user_id = db.Column(db.Integer, ForeignKey(User.id), primary_key=True)
+    user_id = db.Column(db.Integer, ForeignKey(User.id))
 
     user = relationship('User', foreign_keys='UserToken.user_id')
 
@@ -53,7 +53,7 @@ class ImdbContent(db.Model):
 
 class Quiz(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, ForeignKey(User.id), primary_key=True)
+    user_id = db.Column(db.Integer, ForeignKey(User.id))
     score = db.Column(db.Integer, default=0)
 
     user = relationship('User', foreign_keys='Quiz.user_id')
@@ -64,7 +64,7 @@ class Quiz(db.Model):
 
 class Question(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    content_id = db.Column(db.Integer, ForeignKey(ImdbContent.id), primary_key=True)
+    content_id = db.Column(db.Integer, ForeignKey(ImdbContent.id))
     question = db.Column(db.Text)
     quiz_id = db.Column(db.Integer, ForeignKey(Quiz.id))
     option1 = db.Column(db.String(150), nullable=False)

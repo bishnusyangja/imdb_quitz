@@ -29,6 +29,8 @@ class QuizView(BaseView):
 
     def permission_for_get(self):
         quiz_attempted = self.get_quiz_attempted()
+        # import pdb;pdb.set_trace()
+        print('quiz attempted', quiz_attempted)
         if quiz_attempted >= 1:
             error = {'error': 'Only one quiz can be attempted by a user'}
             return False, error
@@ -45,19 +47,17 @@ class QuizView(BaseView):
 
     def get_options(self, content, right_number=None):
         options = random.sample(content.nominees.replace(content.winner, '').strip(NOMINEES_SPLIT).replace(
-            NOMINEES_SPLIT*2, NOMINEES_SPLIT).split(NOMINEES_SPLIT), 3)
-        params = {}
+            NOMINEES_SPLIT * 2, NOMINEES_SPLIT).split(NOMINEES_SPLIT), 3)
         right_number = random.choice(range(4)) + 1 if right_number is None else right_number
+        params = {f'option{right_number}': content.winner}
         right_assigned = False
         right_option = ''
         for i in range(3):
-            if i+1 == right_number:
-                right_option = f'option{right_number}'
-                params[right_option] = content.winner
+            if i + 1 == right_number:
                 right_assigned = True
-            else:
-                index = i+1 if right_assigned else i+2
-                params[f'option{index}'] = options[index-1]
+            index = i + 2 if right_assigned else i + 1
+            print(options, i + 1)
+            params[f'option{index}'] = options[i]
         params['right_answer'] = right_option
         return params
 
@@ -99,8 +99,7 @@ class QuizView(BaseView):
         return self.get_question_list()
 
     def get_quiz_attempted(self):
-        user_id = None
-        quiz_attempted = Quiz.query.filter_by(user_id=user_id).count()
+        quiz_attempted = Quiz.query.filter_by(user_id=self.user.id).count()
         return quiz_attempted
 
     def evaluate_quiz(self, quiz):

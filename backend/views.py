@@ -43,7 +43,7 @@ class BaseView:
             response = make_response(jsonify(error), 403)
         else:
             qs = self.get_queryset()
-            data = [{key: item[key] for key in self.field_items} for item in qs]
+            data = [{key: getattr(item, key, 'N/A') for key in self.field_items} for item in qs]
             response = make_response(jsonify(data), 200)
         # response.headers.add('Access-Control-Allow-Origin', '*')
         # response.headers.add('Access-Control-Allow-Credentials', True)
