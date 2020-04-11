@@ -12,6 +12,7 @@ class QuizView(BaseView):
     def __init__(self, request, **kwargs):
         super().__init__(request)
         self.quiz_id = kwargs.get('quiz_id')
+        print('at quiz view', self.user.id)
 
     def permission_for_post(self):
         try:
@@ -29,6 +30,7 @@ class QuizView(BaseView):
 
     def permission_for_get(self):
         quiz_attempted = self.get_quiz_attempted()
+        quiz_attempted = 0 # for testing purpose
         print('quiz attempted', quiz_attempted)
         if quiz_attempted >= 1:
             error = {'error': 'Only one quiz can be attempted by a user'}
@@ -76,8 +78,7 @@ class QuizView(BaseView):
         return obj
 
     def get_quiz_id(self):
-        user_id = None
-        q = Quiz(user_id=user_id)
+        q = Quiz(user_id=self.user.id)
         db.session.add(q)
         db.session.commit()
         return q.id

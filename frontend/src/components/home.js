@@ -38,7 +38,7 @@ import Request from '../api'
 
     const questionPage = (obj, index) => {
         return<> <div style={{marginTop: '40px'}}><h2>{index+1}. {obj.question} </h2></div>
-            <Radio.Group onChange={onOptionChange} value=''>
+            <Radio.Group onChange={() => {onOptionChange(index) }} value=''>
                 <Radio style={radioStyle} value='option1'> {obj.option1} </Radio>
                 <Radio style={radioStyle} value='option2'> {obj.option2} </Radio>
                 <Radio style={radioStyle} value='option3'> {obj.option3} </Radio>
