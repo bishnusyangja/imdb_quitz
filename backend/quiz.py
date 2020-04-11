@@ -29,7 +29,6 @@ class QuizView(BaseView):
 
     def permission_for_get(self):
         quiz_attempted = self.get_quiz_attempted()
-        # import pdb;pdb.set_trace()
         print('quiz attempted', quiz_attempted)
         if quiz_attempted >= 1:
             error = {'error': 'Only one quiz can be attempted by a user'}
@@ -46,8 +45,12 @@ class QuizView(BaseView):
         return f"Which of the following is awarded as {content.category} in {content.award} award?"
 
     def get_options(self, content, right_number=None):
-        options = random.sample(content.nominees.replace(content.winner, '').strip(NOMINEES_SPLIT).replace(
-            NOMINEES_SPLIT * 2, NOMINEES_SPLIT).split(NOMINEES_SPLIT), 3)
+        try:
+            options = random.sample(content.nominees.replace(content.winner, '').strip(NOMINEES_SPLIT).replace(
+                NOMINEES_SPLIT * 2, NOMINEES_SPLIT).split(NOMINEES_SPLIT), 3)
+        except Exception as exc:
+            print('Excep', exc)
+            return None
         right_number = random.choice(range(4)) + 1 if right_number is None else right_number
         params = {f'option{right_number}': content.winner}
         right_assigned = False
@@ -56,19 +59,20 @@ class QuizView(BaseView):
             if i + 1 == right_number:
                 right_assigned = True
             index = i + 2 if right_assigned else i + 1
-            print(options, i + 1)
             params[f'option{index}'] = options[i]
         params['right_answer'] = right_option
         return params
 
     def get_question_obj(self, content, quiz_id):
-        obj = Question(content_id=content.id,
-                       quiz_id=quiz_id,
-                       question=self.get_question_text(content),
-                       **self.get_options(content)
-                       )
-        db.session.add(obj)
-        db.session.commit()
+        params = self.get_options(content)
+        if params:
+            obj = Question(content_id=content.id,
+                           quiz_id=quiz_id,
+                           question=self.get_question_text(content),
+                           **params
+                           )
+        else:
+            obj = None
         return obj
 
     def get_quiz_id(self):
@@ -83,6 +87,11 @@ class QuizView(BaseView):
         s.bulk_save_objects(questions)
         s.commit()
 
+    def get_initial_questions(self, remaining):
+        samples = random.sample(range(20), remaining)
+        qs = ImdbContent.query.filter(ImdbContent.id.in_(samples))
+        return qs
+
     def get_question_list(self):
         count = ImdbContent.query.count()
         samples = random.sample(range(count), 10)
@@ -91,7 +100,17 @@ class QuizView(BaseView):
         questions = []
         quiz_id = self.get_quiz_id()
         for content in qs:
-            questions.append(self.get_question_obj(content, quiz_id))
+            ques = self.get_question_obj(content, quiz_id)
+            if ques:
+                questions.append(ques)
+        if len(questions) < 10:
+            remaining = 10 - len(questions)
+            rm_qs = self.get_initial_questions(remaining)
+            for content in rm_qs:
+                ques = self.get_question_obj(content, quiz_id)
+                if ques:
+                    questions.append(ques)
+
         self.bulk_create_questions(questions)
         return questions
 
