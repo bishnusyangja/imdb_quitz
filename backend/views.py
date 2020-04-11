@@ -20,7 +20,7 @@ class BaseView:
     def get_queryset(self):
         return []
 
-    def get_response(self):
+    def initite_view(self):
         if not self.is_authenticated:
             errors = {'error': 'Authentication failed'}
             return make_response(jsonify(errors), 401)
@@ -30,6 +30,14 @@ class BaseView:
             return self.post()
         else:
             return make_response(jsonify(dict(error='Method not allowed')), 405)
+
+    def get_response(self):
+        try:
+            resp = self.initite_view()
+        except Exception as exc:
+            print('Excep 500 ', exc)
+            resp = make_response(jsonify(dict(error='Server Error')), 500)
+        return resp
 
     def validate_fields(self, data):
         return make_response(jsonify(dict(error='Not Implemented')), 500)
@@ -45,8 +53,6 @@ class BaseView:
             qs = self.get_queryset()
             data = [{key: getattr(item, key, 'N/A') for key in self.field_items} for item in qs]
             response = make_response(jsonify(data), 200)
-        # response.headers.add('Access-Control-Allow-Origin', '*')
-        # response.headers.add('Access-Control-Allow-Credentials', True)
         return response
 
     def post(self):
@@ -60,6 +66,4 @@ class BaseView:
                 response = make_response(jsonify(errors), 400)
             else:
                 response = self.after_validation(data)
-        # response.headers.add('Access-Control-Allow-Origin', '*')
-        # response.headers.add('Access-Control-Allow-Credentials', True)
         return response
