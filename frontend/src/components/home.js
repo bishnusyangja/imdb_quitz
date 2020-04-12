@@ -1,6 +1,6 @@
 import React from 'react';
 import {useState, useEffect} from 'react';
-import { Button, Radio, Table } from 'antd';
+import { Button, Radio, Table, Pagination } from 'antd';
 import Request from '../api'
 
  const HomePage = () => {
@@ -30,8 +30,7 @@ import Request from '../api'
     const getQuiz = () => {
         Request().get('/quiz/')
           .then((response) => {
-            console.log(response.data);
-            setState({data: response.data, start: true});
+            setState({data: response.data.results, start: true});
             setAnswer(defaultAnswer(response.data));
           })
           .catch((error) => {
@@ -65,7 +64,7 @@ import Request from '../api'
     const getScoreBoard = () => {
         Request().get('/score/list/', {page_size: pagination.pageSize})
           .then((response) => {
-            setScoreBoard({data: response.data});
+            setScoreBoard({data: response.data.results});
           })
           .catch((error) => {
             console.log("error at quiz", error)
@@ -113,7 +112,7 @@ import Request from '../api'
     const questionPage = (obj, index) => {
         return<> <div style={{marginTop: '40px'}}><h2>{index+1}. {obj.question} </h2></div>
             <Radio.Group onChange={(e) => { onOptionChange(obj.key_id, e.target.value) }}
-                    value={ans[obj.key_id]}>
+                    value={ans[obj.key_id]} key={obj.key_id}>
                 <Radio style={radioStyle} value='option1' > {obj.option1} </Radio>
                 <Radio style={radioStyle} value='option2' > {obj.option2} </Radio>
                 <Radio style={radioStyle} value='option3' > {obj.option3} </Radio>
@@ -129,12 +128,19 @@ import Request from '../api'
         </>
     }
 
+    const onPageChange = () => {
+        console.log('page change');
+    }
+
     if (is_submitted && scoreBoard.data){
         return (
             <div style={{align: 'center', margin: '100px'}}>
                 <h2> Your Score : {score}</h2>
                 <h2> Top Score List</h2>
-                    {state.data && <Table dataSource={scoreBoard.data} columns={columns} pagination={pagination}/>}
+                    {state.data && <Table dataSource={scoreBoard.data} columns={columns} pagination={false}/>}
+                    <Pagination defaultCurrent={1}
+                              total={500}
+                              onChange={onPageChange}/>
             </div>
         );
 

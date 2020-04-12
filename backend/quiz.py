@@ -133,6 +133,7 @@ class ScoreView(BaseView):
     field_items = ('user.name', 'user.username', 'score', )
 
     def get_queryset(self):
+        self.count = Quiz.query.count()
         qs = Quiz.query.options(joinedload(Quiz.user)).order_by(desc(Quiz.score)).all()
         return qs
 

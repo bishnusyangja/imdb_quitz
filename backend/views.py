@@ -91,7 +91,6 @@ class BaseView:
             response = make_response(jsonify(error), 403)
         else:
             qs = self.get_queryset()
-            self.count = qs.count()
             qs = self.get_paginated_query(qs)
             data = self.get_dict_from_query(qs)
             response = make_response(jsonify(data), 200)
@@ -104,6 +103,7 @@ class BaseView:
         else:
             data = self.request.json
             errors = self.validate_fields(data)
+            print(errors)
             if errors:
                 response = make_response(jsonify(errors), 400)
             else:

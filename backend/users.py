@@ -48,7 +48,6 @@ class ApiAuthView(BaseView):
 
     def get_user_obj(self, username):
         try:
-            print(username, type(username))
             user = User.query.filter_by(username=username)[0]
         except Exception as exc:
             print("userExcep", exc)
@@ -59,6 +58,7 @@ class ApiAuthView(BaseView):
         errors = {}
         username = data.get('username')
         self.user = self.get_user_obj(username)
+        print(self.user, ' sefl.user')
         if self.user is None:
             errors['user'] = 'Username or password doesnot match'
         else:
@@ -88,7 +88,7 @@ class ApiAuthView(BaseView):
 
 def user_registration():
     view = UserRegistrationView(request)
-    content_count = ImdbContent.query.all().count()
+    content_count = ImdbContent.query.count()
     if content_count == 0:
         load_content_to_db.delay()
     response = view.get_response()
