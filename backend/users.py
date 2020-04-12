@@ -89,8 +89,8 @@ class ApiAuthView(BaseView):
 def user_registration():
     view = UserRegistrationView(request)
     content_count = ImdbContent.query.count()
-    if content_count == 0:
-        load_content_to_db.delay()
+    # if content_count == 0:
+    #     load_content_to_db.delay()
     response = view.get_response()
     return response
 

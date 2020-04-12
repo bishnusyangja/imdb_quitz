@@ -110,16 +110,17 @@ import Request from '../api'
     };
 
     const questionPage = (obj, index) => {
-        return<> <div style={{marginTop: '40px'}}><h2>{index+1}. {obj.question} </h2></div>
+        return<div key={obj.key_id}>
+            <div style={{marginTop: '40px'}}><h2>{index+1}. {obj.question} </h2></div>
             <Radio.Group onChange={(e) => { onOptionChange(obj.key_id, e.target.value) }}
-                    value={ans[obj.key_id]} key={obj.key_id}>
-                <Radio style={radioStyle} value='option1' > {obj.option1} </Radio>
-                <Radio style={radioStyle} value='option2' > {obj.option2} </Radio>
-                <Radio style={radioStyle} value='option3' > {obj.option3} </Radio>
-                <Radio style={radioStyle} value='option4' > {obj.option4} </Radio>
+                    value={ans[obj.key_id]}>
+                <Radio style={radioStyle} value='option1' checked={ans[obj.key_id]=='option1'} > {obj.option1} </Radio>
+                <Radio style={radioStyle} value='option2' checked={ans[obj.key_id]=='option2'} > {obj.option2} </Radio>
+                <Radio style={radioStyle} value='option3' checked={ans[obj.key_id]=='option3'} > {obj.option3} </Radio>
+                <Radio style={radioStyle} value='option4' checked={ans[obj.key_id]=='option4'} > {obj.option4} </Radio>
 
             </Radio.Group>
-      </>
+      </div>
     }
 
     const scorePage = (obj, index) => {

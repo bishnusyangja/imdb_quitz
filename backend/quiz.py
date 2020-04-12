@@ -99,7 +99,8 @@ class QuizView(BaseView):
 
     def get_quiz_attempted(self):
         quiz_attempted = Quiz.query.filter_by(user_id=self.user.id).count()
-        return quiz_attempted
+        # return quiz_attempted
+        return 0
 
     def evaluate_quiz(self, quiz):
         score = 0

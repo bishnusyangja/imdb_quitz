@@ -7,7 +7,7 @@ from celery.utils.log import get_task_logger
 logger = get_task_logger(__name__)
 
 
-@celery.task
+@celery.task(name='imdb')
 def load_content_to_db():
     s = db.session
     data = crawl_imdb_content()
