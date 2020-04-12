@@ -26,14 +26,13 @@ class QuizView(BaseView):
             if not quiz.user_id == self.user.id:
                 error = {'error': 'You have no permission to attempt this quiz'}
                 return False, error
-            # if quiz.is_submitted:
-            #     error = {'error': 'You have already answered this quiz'}
-            #     return False, error
+            if quiz.is_submitted:
+                error = {'error': 'You have already answered this quiz'}
+                return False, error
         return True, {}
 
     def permission_for_get(self):
         quiz_attempted = self.get_quiz_attempted()
-        quiz_attempted = 0  # todo: for testing purpose will change later
         if quiz_attempted >= 1:
             error = {'error': 'Only one quiz can be attempted by a user'}
             return False, error
@@ -58,11 +57,9 @@ class QuizView(BaseView):
         return obj
 
     def get_quiz_id(self):
-        print('at get quiz')
         q = Quiz(user_id=self.user.id)
         db.session.add(q)
         db.session.commit()
-        print('before return get quiz')
         return q.id
 
     def bulk_create_questions(self, questions):
@@ -108,20 +105,18 @@ class QuizView(BaseView):
         score = 0
         qs = Question.query.filter_by(quiz_id=self.quiz_id).all()
         ans_dict = {item.key_id: item.right_answer for item in qs}
+        update_list = []
         for ques, ans in quiz.items():
             if ans and ans_dict.get(ques) == ans.strip():
                 score += 1
-        # session.bulk_update_mappings(
-        #     Salary,
-        #     [{employeeId: 1, Salary: 10000},
-        #      {employeeId: 2, Salary: 15000}]
-        # )
+            update_list.append({'id': ques.id, 'answered': ans})
+        db.session.bulk_update_mappings(Question, update_list)
         return score
 
     def save_score_on_quiz(self, score):
         obj = Quiz.query.get(self.quiz_id)
         obj.score = score
-        # obj.is_submitted = True
+        obj.is_submitted = True
         db.session.add(obj)
         db.session.commit()
 

@@ -54,7 +54,7 @@ class Quiz(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, ForeignKey(User.id))
     score = db.Column(db.Integer, default=0)
-    # is_submitted = db.Column(db.Boolean, default=False)
+    is_submitted = db.Column(db.Boolean, default=False)
 
     user = relationship('User', foreign_keys='Quiz.user_id')
 

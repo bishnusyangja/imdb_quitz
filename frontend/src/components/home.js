@@ -102,8 +102,6 @@ import Request from '../api'
     const onOptionChange = (key_id, value) => {
         ans[key_id] = value
         setAnswer(ans);
-        console.log("working", key_id, value);
-        console.log(ans);
     }
 
     const radioStyle = {
