@@ -8,7 +8,7 @@ from views import BaseView
 
 
 class QuizView(BaseView):
-    field_items = ('question', 'option1', 'option2', 'option3', 'option4', 'quiz_id', )
+    field_items = ('id', 'question', 'option1', 'option2', 'option3', 'option4', 'quiz_id', )
 
     def __init__(self, req, **kwargs):
         super().__init__(req)
@@ -103,10 +103,9 @@ class QuizView(BaseView):
         score = 0
         qs = Question.query.filter_by(quiz_id=self.quiz_id).all()
         ans_dict = {item['id']: item['right_answer'] for item in qs}
-        for question in quiz:
-            ques = question.get('question')
-            ans = question.get('answer')
-            if ans and ans_dict.get(ques) == ans:
+        for ques, ans in quiz.items():
+            ques = ques.replace('que_', '')
+            if ans and ans_dict.get(ques) == ans.strip():
                 score += 1
         return score
 
@@ -117,8 +116,7 @@ class QuizView(BaseView):
         db.session.commit()
 
     def after_validation(self, data):
-        quiz = data.get('quiz')
-        score = self.evaluate_quiz(quiz)
+        score = self.evaluate_quiz(data)
         self.save_score_on_quiz(score)
         return make_response(jsonify(dict(score=score)), 200)
 
