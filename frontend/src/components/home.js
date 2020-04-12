@@ -49,7 +49,7 @@ import 'antd/dist/antd.css'
     const onOptionChange = (id, value) => {
         ans['que_'+id] = value
         setAnswer(ans);
-        console.log("working", index, value);
+        console.log("working", id, value);
         console.log(ans);
     }
 
@@ -59,7 +59,7 @@ import 'antd/dist/antd.css'
       lineHeight: '30px',
     };
 
-    const questionPage = (obj) => {
+    const questionPage = (obj, index) => {
         return<> <div style={{marginTop: '40px'}}><h2>{index+1}. {obj.question} </h2></div>
             <Radio.Group onChange={(e) => {e.preventDefault(); onOptionChange(obj.id, e.target.value) }}
                     value={ans['que_'+obj.id]}>
@@ -74,11 +74,11 @@ import 'antd/dist/antd.css'
 
 
     if (state.start && state.data){
-        ans_obj = {}
+        let ans_obj = {}
         for (let i in state.data){
             ans_obj['que_'+state.data[i].id] = '';
         }
-        setAnswer(ans_obj)
+        setAnswer(ans_obj);
         return (
             <div style={{align: 'center', margin: '100px'}}>
                 <h2> Quiz Questions</h2>
