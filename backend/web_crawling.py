@@ -1,10 +1,12 @@
 import json
-import re
 
 import requests
 from bs4 import BeautifulSoup
 
 from settings import NOMINEES_SPLIT
+from celery.utils.log import get_task_logger
+
+logger = get_task_logger(__name__)
 
 ROOT_URL = 'https://imdb.com'
 
@@ -14,7 +16,7 @@ class WebScrapping:
 
     def fetch_oscar_emmy_url(self):
         url = self.ROOT_URL
-        print('fetching base response.....')
+        logger.info('fetching base response.....')
         resp = requests.get(url)
         bs = BeautifulSoup(resp.text, 'html.parser')
         oscar_url, emmys_url = None, None
@@ -22,28 +24,28 @@ class WebScrapping:
             span = anc.find('span')
             if span and span.get_text().strip().lower() == 'oscars':
                 oscar_url = anc.attrs.get('href')
-                print('found oscar url : ', oscar_url)
+                logger.info('found oscar url : ', oscar_url)
             if span and span.get_text().strip().lower() == 'emmys':
                 emmys_url = anc.attrs.get('href')
-                print('found emmys url : ', emmys_url)
+                logger.info('found emmys url : ', emmys_url)
             if oscar_url and emmys_url:
                 break
         return oscar_url, emmys_url
 
     def fetch_winner_urls(self, url):
-        print('fetching winner urls .....')
+        logger.info('fetching winner urls .....')
         resp = requests.get(f'{self.ROOT_URL}{url}')
         bs = BeautifulSoup(resp.text, 'html.parser')
         anc = bs.find('a', attrs={'title': 'Winners'})
         if hasattr(anc, 'attrs'):
             winners_url = anc.attrs.get('href')
-            print('found winners url.... ', winners_url)
+            logger.info('found winners url.... ', winners_url)
         else:
             winners_url = ''
         return winners_url
 
     def fetch_winner_content(self, url):
-        print('fetching winner content .....')
+        logger.info('fetching winner content .....')
         url = f'{self.ROOT_URL}{url}'
         resp = requests.get(url)
         bs = BeautifulSoup(resp.text, 'html.parser')
@@ -61,7 +63,7 @@ class WebScrapping:
                     content = text[first_idx: second_idx+1]
                     return json.loads(content)
                 except Exception as exc:
-                    print("Exception", exc)
+                    logger.error("Exception", exc)
         return {}
 
     def extract_content_from_data(self, data):
@@ -79,7 +81,7 @@ class WebScrapping:
                         try:
                             item = nominees['primaryNominees'][0]['name']
                         except Exception as exc:
-                            print(exc)
+                            logger.info("ExceptioninNominees", exc)
                         else:
                             is_winner = nominees['isWinner']
                             if is_winner:

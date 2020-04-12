@@ -1,7 +1,8 @@
 from flask import request, make_response, jsonify
 
 from helpers import truncate_line, get_random_string
-from models import db, User, UserToken
+from models import db, User, UserToken, ImdbContent
+from task import load_content_to_db
 from views import BaseView
 
 
@@ -87,6 +88,9 @@ class ApiAuthView(BaseView):
 
 def user_registration():
     view = UserRegistrationView(request)
+    content_count = ImdbContent.query.all().count()
+    if content_count == 0:
+        load_content_to_db.delay()
     response = view.get_response()
     return response
 

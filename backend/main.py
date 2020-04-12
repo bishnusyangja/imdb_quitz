@@ -1,20 +1,21 @@
 import sys
 import os
 from os.path import dirname
+
 root_path = dirname(os.path.abspath(__file__))
 sys.path.append(os.path.join(root_path))
 
-
+from app import add_celery_config
 from urls import get_flask_app
+from task import load_content_to_db
+
 
 app = get_flask_app()
+celery = add_celery_config(app)
+celery.conf.update(app.config)
+# the task starts after countdown seconds
 
-# @app.after_request
-# def after_request(response):
-#   response.headers.add('Access-Control-Allow-Origin', '*')
-#   response.headers.add('Access-Control-Allow-Headers', 'Content-Type,Authorization')
-#   response.headers.add('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS')
-#   return response
+
 
 # if __name__ == '__main__':
 #    app.run(debug=True)
