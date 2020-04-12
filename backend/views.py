@@ -13,6 +13,7 @@ class BaseView:
         self.user = request.environ.get('IMDB_USER')
         self.request = request
         self.is_authenticated = request.environ.get('IMDB_AUTHENTICATION', False)
+        self.count = 0
 
     def check_permission(self):
         return True, {}
@@ -57,20 +58,25 @@ class BaseView:
         return value
 
     def get_dict_from_query(self, qs):
-        return [{field.replace('.', '_'): self.get_field_value(item, field) for field in self.field_items} for item in qs]
+        data = dict(results=[{field.replace('.', '_'): self.get_field_value(item,
+                    field) for field in self.field_items} for item in qs])
+        data['page_size'] = self.page_size
+        data['page'] = self.page
+        data['count'] = self.count
+        return data
 
     def get_query_limit(self):
         page = self.request.args.get('page') or self.page
         page_size = self.request.args.get('page_size') or self.page_size
         try:
-            page = int(page)
+            self.page = int(page)
         except Exception as exc:
-            page = self.page
+            pass
         try:
-            page_size = int(page_size)
+            self.page_size = int(page_size)
         except Exception as exc:
-            page_size = self.page_size
-        page_size = int(page_size)
+            pass
+
         start = (page - 1) * page_size
         end = page_size * page
         return start, end
@@ -85,6 +91,7 @@ class BaseView:
             response = make_response(jsonify(error), 403)
         else:
             qs = self.get_queryset()
+            self.count = qs.count()
             qs = self.get_paginated_query(qs)
             data = self.get_dict_from_query(qs)
             response = make_response(jsonify(data), 200)
