@@ -45,13 +45,16 @@ class BaseView:
     def after_validation(self, data):
         return make_response(jsonify(dict(error='Not Implemented')), 500)
 
+    def get_dict_from_query(self, qs):
+        return [{key: getattr(item, key, 'N/A') for key in self.field_items} for item in qs]
+
     def get(self):
         is_allowed, error = self.check_permission()
         if not is_allowed:
             response = make_response(jsonify(error), 403)
         else:
             qs = self.get_queryset()
-            data = [{key: getattr(item, key, 'N/A') for key in self.field_items} for item in qs]
+            data = self.get_dict_from_query(qs)
             response = make_response(jsonify(data), 200)
         return response
 

@@ -17,6 +17,10 @@ import Request from '../api'
         data:null, start: false
     });
 
+    const [is_submitted, setSubmitted] = useState(false);
+
+    const [scoreBoard, setScoreBoard] = useState({data: null});
+
     const [score, setScore] = useState(0);
 
     const [ans, setAnswer] = useState({});
@@ -39,19 +43,32 @@ import Request from '../api'
     const submitAnswer = () => {
         let quiz_id = 1;
         Request().post('/quiz/'+quiz_id+'/', ans)
-          .then(function (response) {
+          .then((response) => {
             setScore(response.data.score);
           })
-          .catch(function (error) {
-            console.log("error at quiz")
+          .catch((error) => {
+            console.log("error in quiz submission")
           })
-          .finally(function () {
+          .finally(() => {
             console.log('finally block at quiz')
         });
     }
 
     const startQuiz = () => {
         getQuiz();
+    }
+
+    const getScoreBoard = () => {
+        Request().get('/quiz/')
+          .then((response) => {
+            setScoreBoard({data: response.data});
+          })
+          .catch((error) => {
+            console.log("error at quiz", error)
+          })
+          .finally(() => {
+            console.log('finally block at quiz')
+        });
     }
 
     const onOptionChange = (key_id, value) => {
@@ -80,8 +97,22 @@ import Request from '../api'
       </>
     }
 
+    const scorePage = (obj, index) => {
+        return <>
+            <div style={{marginTop: '20px'}}><h2>{index+1}. {obj.question} </h2></div>
+        </>
+    }
 
-    if (state.start && state.data){
+    if (is_submitted){
+        return (
+            <div style={{align: 'center', margin: '100px'}}>
+                <h2> Your Score : {score}</h2>
+                    {scoreBoard.data.map((item, index) => (scorePage(item, index))) }
+               <Button type="primary" onClick={submitAnswer}>Submit Answer</Button>
+            </div>
+        );
+
+    } else if (state.start && state.data){
         return (
             <div style={{align: 'center', margin: '100px'}}>
                 <h2> Quiz Questions</h2>
@@ -90,9 +121,7 @@ import Request from '../api'
                <Button type="primary" onClick={submitAnswer}>Submit Answer</Button>
             </div>
         );
-    }
-
-    else
+    } else
         return (
             <div style={{align: 'center', margin: '100px'}}>
                 <h2>After you click the button you can not go back.</h2>

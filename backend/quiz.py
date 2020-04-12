@@ -1,6 +1,7 @@
 import random
 from sqlalchemy import desc
 from flask import request, make_response, jsonify
+from sqlalchemy.orm import joinedload
 
 from helpers import get_question_text, get_options_from_content, get_random_string
 from models import Quiz, Question, ImdbContent, db
@@ -128,7 +129,7 @@ class QuizView(BaseView):
 
 
 class ScoreView(BaseView):
-    field_items = ('user_id', 'score', )
+    field_items = ('user.name', 'user.username', 'score', )
 
     def get_query_limit(self):
         page = self.request.args.get('page') or self.page
@@ -141,8 +142,22 @@ class ScoreView(BaseView):
         start, end = self.get_query_limit()
         return qs[start, end]
 
+    def get_field_value(self, item, field):
+        fields = field.split('.')
+        if len(fields) > 1:
+            value = item
+            for ff in fields:
+                if not (value is None or value == 'N/A'):
+                    value = getattr(value, ff, 'N/A')
+        else:
+            value = getattr(item, field, 'N/A')
+        return value
+
+    def get_dict_from_query(self, qs):
+        return [{field.replace('.', '_'): self.get_field_value(item, field) for field in self.field_items} for item in qs]
+
     def get_queryset(self):
-        qs = Quiz.query.all().order_by(desc(Quiz.score))
+        qs = Quiz.query.options(joinedload(Quiz.user)).all().order_by(desc(Quiz.score))
         qs = self.get_paginated_query(qs)
         return qs
 
