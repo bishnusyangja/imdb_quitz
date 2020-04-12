@@ -20,7 +20,7 @@ export default Request = () => { return {
     },
 
     post : (url, data) => {
-        return getRequestObject().post(url, data)
+        return getRequestObject().post(url, data);
     },
 
     patch : (url, data, params) => {

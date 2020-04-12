@@ -47,6 +47,7 @@ class ApiAuthView(BaseView):
 
     def get_user_obj(self, username):
         try:
+            print(username, type(username))
             user = User.query.filter_by(username=username)[0]
         except Exception as exc:
             print("userExcep", exc)

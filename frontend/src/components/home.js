@@ -2,12 +2,19 @@ import React from 'react';
 import {useState, useEffect} from 'react';
 import { Button, Radio } from 'antd';
 import Request from '../api'
-import 'antd/dist/antd.css'
 
  const HomePage = () => {
 
+    const defaultAnswer = (data) => {
+        let ans_obj = {}
+        for (let i in data){
+            ans_obj[data[i].key_id] = '';
+        }
+        return ans_obj;
+    }
+
     const [state, setState] = useState({
-        data:null, start: false, value: ''
+        data:null, start: false
     });
 
     const [score, setScore] = useState(0);
@@ -16,21 +23,22 @@ import 'antd/dist/antd.css'
 
     const getQuiz = () => {
         Request().get('/quiz/')
-          .then(function (response) {
-            setState({data: response.data, start: true})
-
+          .then((response) => {
+            console.log(response.data);
+            setState({data: response.data, start: true});
+            setAnswer(defaultAnswer(response.data));
           })
-          .catch(function (error) {
-            console.log("error at quiz")
+          .catch((error) => {
+            console.log("error at quiz", error)
           })
-          .finally(function () {
+          .finally(() => {
             console.log('finally block at quiz')
         });
     }
 
     const submitAnswer = () => {
         let quiz_id = 1;
-        Request().get('/quiz/'+quiz_id+'/', ans)
+        Request().post('/quiz/'+quiz_id+'/', ans)
           .then(function (response) {
             setScore(response.data.score);
           })
@@ -46,10 +54,10 @@ import 'antd/dist/antd.css'
         getQuiz();
     }
 
-    const onOptionChange = (id, value) => {
-        ans['que_'+id] = value
+    const onOptionChange = (key_id, value) => {
+        ans[key_id] = value
         setAnswer(ans);
-        console.log("working", id, value);
+        console.log("working", key_id, value);
         console.log(ans);
     }
 
@@ -61,24 +69,19 @@ import 'antd/dist/antd.css'
 
     const questionPage = (obj, index) => {
         return<> <div style={{marginTop: '40px'}}><h2>{index+1}. {obj.question} </h2></div>
-            <Radio.Group onChange={(e) => {e.preventDefault(); onOptionChange(obj.id, e.target.value) }}
-                    value={ans['que_'+obj.id]}>
-                <Radio style={radioStyle} value='option1'> {obj.option1} </Radio>
-                <Radio style={radioStyle} value='option2'> {obj.option2} </Radio>
-                <Radio style={radioStyle} value='option3'> {obj.option3} </Radio>
-                <Radio style={radioStyle} value='option4'> {obj.option4} </Radio>
+            <Radio.Group onChange={(e) => { onOptionChange(obj.key_id, e.target.value) }}
+                    value={ans[obj.key_id]}>
+                <Radio style={radioStyle} value='option1' > {obj.option1} </Radio>
+                <Radio style={radioStyle} value='option2' > {obj.option2} </Radio>
+                <Radio style={radioStyle} value='option3' > {obj.option3} </Radio>
+                <Radio style={radioStyle} value='option4' > {obj.option4} </Radio>
+
             </Radio.Group>
       </>
     }
 
 
-
     if (state.start && state.data){
-        let ans_obj = {}
-        for (let i in state.data){
-            ans_obj['que_'+state.data[i].id] = '';
-        }
-        setAnswer(ans_obj);
         return (
             <div style={{align: 'center', margin: '100px'}}>
                 <h2> Quiz Questions</h2>

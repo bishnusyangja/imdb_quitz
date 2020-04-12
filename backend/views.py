@@ -40,7 +40,7 @@ class BaseView:
         return resp
 
     def validate_fields(self, data):
-        return make_response(jsonify(dict(error='Not Implemented')), 500)
+        return {make_response(jsonify(dict(error='Not Implemented')), 500)}
 
     def after_validation(self, data):
         return make_response(jsonify(dict(error='Not Implemented')), 500)

@@ -54,6 +54,7 @@ class Quiz(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, ForeignKey(User.id))
     score = db.Column(db.Integer, default=0)
+    # is_submitted = db.Column(db.Boolean, default=False)
 
     user = relationship('User', foreign_keys='Quiz.user_id')
 
@@ -72,6 +73,7 @@ class Question(db.Model):
     option4 = db.Column(db.String(150), nullable=False)
     right_answer = db.Column(db.String(10), nullable=False)
     answered = db.Column(db.String(10), nullable=True)
+    key_id = db.Column(db.String(50), nullable=True)
 
     content = relationship('ImdbContent', foreign_keys='Question.content_id')
     quiz = relationship('Quiz', foreign_keys='Question.quiz_id')

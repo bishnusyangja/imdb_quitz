@@ -18,3 +18,10 @@ app = get_flask_app()
 
 # if __name__ == '__main__':
 #    app.run(debug=True)
+
+
+# todo: remove quiz_attempted = 0
+# todo: migrate is_submitted in quiz models
+# todo: check is_submitted in quiz post check permission
+# todo: update is_submitted after getting score
+# todo: radio button not working in quiz list

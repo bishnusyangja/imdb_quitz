@@ -2,22 +2,20 @@ import random
 from sqlalchemy import desc
 from flask import request, make_response, jsonify
 
-from helpers import get_question_text, get_options_from_content
+from helpers import get_question_text, get_options_from_content, get_random_string
 from models import Quiz, Question, ImdbContent, db
 from views import BaseView
 
 
 class QuizView(BaseView):
-    field_items = ('id', 'question', 'option1', 'option2', 'option3', 'option4', 'quiz_id', )
+    field_items = ('key_id', 'question', 'option1', 'option2', 'option3', 'option4', 'quiz_id', )
 
     def __init__(self, req, **kwargs):
         super().__init__(req)
         self.quiz_id = kwargs.get('quiz_id')
-        print('at quiz view', self.user.id)
 
     def permission_for_post(self):
         try:
-            print(self.quiz_id)
             quiz = Quiz.query.get(self.quiz_id)
         except Exception as exc:
             print('GetQuizExc: ', exc)
@@ -27,6 +25,9 @@ class QuizView(BaseView):
             if not quiz.user_id == self.user.id:
                 error = {'error': 'You have no permission to attempt this quiz'}
                 return False, error
+            # if quiz.is_submitted:
+            #     error = {'error': 'You have already answered this quiz'}
+            #     return False, error
         return True, {}
 
     def permission_for_get(self):
@@ -48,6 +49,7 @@ class QuizView(BaseView):
         if params:
             obj = Question(content_id=content.id,
                            quiz_id=quiz_id,
+                           key_id=get_random_string(20),
                            question=get_question_text(content),
                            **params)
         else:
@@ -102,7 +104,7 @@ class QuizView(BaseView):
     def evaluate_quiz(self, quiz):
         score = 0
         qs = Question.query.filter_by(quiz_id=self.quiz_id).all()
-        ans_dict = {item['id']: item['right_answer'] for item in qs}
+        ans_dict = {item.key_id: item.right_answer for item in qs}
         for ques, ans in quiz.items():
             ques = ques.replace('que_', '')
             if ans and ans_dict.get(ques) == ans.strip():
@@ -112,8 +114,12 @@ class QuizView(BaseView):
     def save_score_on_quiz(self, score):
         obj = Quiz.query.get(self.quiz_id)
         obj.score = score
+        # obj.is_submitted = True
         db.session.add(obj)
         db.session.commit()
+
+    def validate_fields(self, data):
+        return {}
 
     def after_validation(self, data):
         score = self.evaluate_quiz(data)
