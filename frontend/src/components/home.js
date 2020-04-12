@@ -82,7 +82,7 @@ import 'antd/dist/antd.css'
         return (
             <div style={{align: 'center', margin: '100px'}}>
                 <h2> Quiz Questions</h2>
-                    {state.data.map((ques) => (questionPage(ques, index))) }
+                    {state.data.map((ques, index) => (questionPage(ques, index))) }
 
                <Button type="primary" onClick={submitAnswer}>Submit Answer</Button>
             </div>
