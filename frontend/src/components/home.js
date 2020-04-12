@@ -16,12 +16,29 @@ import Request from '../api'
     }
 
     const [state, setState] = useState({
-        data:null, start: false
+        data:[
+            {question: 'Which of the following is abc ? ', option1: 'a dfaf', optin2: 'b dfadf', option3: 'c fdfadf', option4: 'd eeee'},
+            {question: 'Which of the following is dfdaf ? ', option1: 'a dfaf', optin2: 'b dfadf', option3: 'c ddd', option4: 'd dfafd'},
+            {question: 'Which of the following is aaaaabc ? ', option1: 'a rrr', optin2: 'b 000', option3: 'c ert', option4: 'd rrr'},
+            {question: 'Which of the following is vvvv ? ', option1: 'a yyyy', optin2: 'b ooo', option3: 'c fdfadf', option4: 'd gggg'},
+            {question: 'Which of the following is eeee ? ', option1: 'a tttt', optin2: 'b ccc', option3: 'c fdfadf', option4: 'd dfafd'},
+            {question: 'Which of the following is rrrr ? ', option1: 'a fdaf', optin2: 'b dfadf', option3: 'c fdfadf', option4: 'd rrr'}
+        ], start: true
     });
 
     const [is_submitted, setSubmitted] = useState(false);
 
-    const [scoreBoard, setScoreBoard] = useState({data: null});
+    const [scoreBoard, setScoreBoard] = useState({data: [
+        {'user_name': 'ramesh', 'user_username': 'Bishnu', 'score': 1},
+        {'user_name': 'ram', 'user_username': 'yes', 'score': 5},
+        {'user_name': 'hari', 'user_username': 'no', 'score': 4},
+        {'user_name': 'sundar', 'user_username': 'heis', 'score': 3},
+        {'user_name': 'santa', 'user_username': 'good', 'score': 9},
+        {'user_name': 'ranju', 'user_username': 'handsome', 'score': 5},
+        {'user_name': 'kamala', 'user_username': 'Bishnu', 'score': 52},
+        {'user_name': 'dang', 'user_username': 'Bishnu', 'score': 5},
+        ]
+        });
 
     const [score, setScore] = useState(0);
 

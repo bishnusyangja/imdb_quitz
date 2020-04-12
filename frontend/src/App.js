@@ -12,7 +12,7 @@ import HomePage from './components/home'
 
 function App() {
     let auth_token = localStorage.getItem('auth_token', '')
-    const [isLoggedin, setIsLoggedin]=useState({status: false});
+    const [isLoggedin, setIsLoggedin]=useState({status: true});
 
     if (isLoggedin.status)
         return (
