@@ -17,12 +17,12 @@ import Request from '../api'
 
     const [state, setState] = useState({
         data:[
-            {question: 'Which of the following is abc ? ', option1: 'a dfaf', optin2: 'b dfadf', option3: 'c fdfadf', option4: 'd eeee'},
-            {question: 'Which of the following is dfdaf ? ', option1: 'a dfaf', optin2: 'b dfadf', option3: 'c ddd', option4: 'd dfafd'},
-            {question: 'Which of the following is aaaaabc ? ', option1: 'a rrr', optin2: 'b 000', option3: 'c ert', option4: 'd rrr'},
-            {question: 'Which of the following is vvvv ? ', option1: 'a yyyy', optin2: 'b ooo', option3: 'c fdfadf', option4: 'd gggg'},
-            {question: 'Which of the following is eeee ? ', option1: 'a tttt', optin2: 'b ccc', option3: 'c fdfadf', option4: 'd dfafd'},
-            {question: 'Which of the following is rrrr ? ', option1: 'a fdaf', optin2: 'b dfadf', option3: 'c fdfadf', option4: 'd rrr'}
+            {question: 'Which of the following is abc ? ', key_id: '', option1: 'a dfaf', optin2: 'b dfadf', option3: 'c fdfadf', option4: 'd eeee'},
+            {question: 'Which of the following is dfdaf ? ', key_id: '', option1: 'a dfaf', optin2: 'b dfadf', option3: 'c ddd', option4: 'd dfafd'},
+            {question: 'Which of the following is aaaaabc ? ', key_id: '', option1: 'a rrr', optin2: 'b 000', option3: 'c ert', option4: 'd rrr'},
+            {question: 'Which of the following is vvvv ? ', key_id: '', option1: 'a yyyy', optin2: 'b ooo', option3: 'c fdfadf', option4: 'd gggg'},
+            {question: 'Which of the following is eeee ? ', key_id: '', option1: 'a tttt', optin2: 'b ccc', option3: 'c fdfadf', option4: 'd dfafd'},
+            {question: 'Which of the following is rrrr ? ', key_id: '', option1: 'a fdaf', optin2: 'b dfadf', option3: 'c fdfadf', option4: 'd rrr'}
         ], start: true
     });
 
