@@ -25,3 +25,5 @@ app = get_flask_app()
 # todo: check is_submitted in quiz post check permission
 # todo: update is_submitted after getting score
 # todo: radio button not working in quiz list
+# todo: bulk update question's answer
+# todo: pagination_custom in antd table

@@ -45,8 +45,39 @@ class BaseView:
     def after_validation(self, data):
         return make_response(jsonify(dict(error='Not Implemented')), 500)
 
+    def get_field_value(self, item, field):
+        fields = field.split('.')
+        if len(fields) > 1:
+            value = item
+            for ff in fields:
+                if not (value is None or value == 'N/A'):
+                    value = getattr(value, ff, 'N/A')
+        else:
+            value = getattr(item, field, 'N/A')
+        return value
+
     def get_dict_from_query(self, qs):
-        return [{key: getattr(item, key, 'N/A') for key in self.field_items} for item in qs]
+        return [{field.replace('.', '_'): self.get_field_value(item, field) for field in self.field_items} for item in qs]
+
+    def get_query_limit(self):
+        page = self.request.args.get('page') or self.page
+        page_size = self.request.args.get('page_size') or self.page_size
+        try:
+            page = int(page)
+        except Exception as exc:
+            page = self.page
+        try:
+            page_size = int(page_size)
+        except Exception as exc:
+            page_size = self.page_size
+        page_size = int(page_size)
+        start = (page - 1) * page_size
+        end = page_size * page
+        return start, end
+
+    def get_paginated_query(self, qs):
+        start, end = self.get_query_limit()
+        return qs[start: end]
 
     def get(self):
         is_allowed, error = self.check_permission()
@@ -54,6 +85,7 @@ class BaseView:
             response = make_response(jsonify(error), 403)
         else:
             qs = self.get_queryset()
+            qs = self.get_paginated_query(qs)
             data = self.get_dict_from_query(qs)
             response = make_response(jsonify(data), 200)
         return response

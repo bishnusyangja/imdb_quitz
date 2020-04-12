@@ -33,7 +33,7 @@ class QuizView(BaseView):
 
     def permission_for_get(self):
         quiz_attempted = self.get_quiz_attempted()
-        quiz_attempted = 0 # todo: for testing purpose will change later
+        quiz_attempted = 0  # todo: for testing purpose will change later
         if quiz_attempted >= 1:
             error = {'error': 'Only one quiz can be attempted by a user'}
             return False, error
@@ -58,9 +58,11 @@ class QuizView(BaseView):
         return obj
 
     def get_quiz_id(self):
+        print('at get quiz')
         q = Quiz(user_id=self.user.id)
         db.session.add(q)
         db.session.commit()
+        print('before return get quiz')
         return q.id
 
     def bulk_create_questions(self, questions):
@@ -107,9 +109,13 @@ class QuizView(BaseView):
         qs = Question.query.filter_by(quiz_id=self.quiz_id).all()
         ans_dict = {item.key_id: item.right_answer for item in qs}
         for ques, ans in quiz.items():
-            ques = ques.replace('que_', '')
             if ans and ans_dict.get(ques) == ans.strip():
                 score += 1
+        # session.bulk_update_mappings(
+        #     Salary,
+        #     [{employeeId: 1, Salary: 10000},
+        #      {employeeId: 2, Salary: 15000}]
+        # )
         return score
 
     def save_score_on_quiz(self, score):
@@ -131,34 +137,8 @@ class QuizView(BaseView):
 class ScoreView(BaseView):
     field_items = ('user.name', 'user.username', 'score', )
 
-    def get_query_limit(self):
-        page = self.request.args.get('page') or self.page
-        page_size = self.request.args.get('page_size') or self.page_size
-        start = (page - 1) * page_size
-        end = page_size * page
-        return start, end
-
-    def get_paginated_query(self, qs):
-        start, end = self.get_query_limit()
-        return qs[start: end]
-
-    def get_field_value(self, item, field):
-        fields = field.split('.')
-        if len(fields) > 1:
-            value = item
-            for ff in fields:
-                if not (value is None or value == 'N/A'):
-                    value = getattr(value, ff, 'N/A')
-        else:
-            value = getattr(item, field, 'N/A')
-        return value
-
-    def get_dict_from_query(self, qs):
-        return [{field.replace('.', '_'): self.get_field_value(item, field) for field in self.field_items} for item in qs]
-
     def get_queryset(self):
         qs = Quiz.query.options(joinedload(Quiz.user)).order_by(desc(Quiz.score)).all()
-        qs = self.get_paginated_query(qs)
         return qs
 
 

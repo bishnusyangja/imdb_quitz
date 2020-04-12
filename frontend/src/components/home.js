@@ -1,9 +1,11 @@
 import React from 'react';
 import {useState, useEffect} from 'react';
-import { Button, Radio } from 'antd';
+import { Button, Radio, Table } from 'antd';
 import Request from '../api'
 
  const HomePage = () => {
+
+    const pagination = {pageSize: 5, page: 1};
 
     const defaultAnswer = (data) => {
         let ans_obj = {}
@@ -61,7 +63,7 @@ import Request from '../api'
     }
 
     const getScoreBoard = () => {
-        Request().get('/score/list/')
+        Request().get('/score/list/', {page_size: pagination.pageSize})
           .then((response) => {
             setScoreBoard({data: response.data});
           })
@@ -72,6 +74,30 @@ import Request from '../api'
             console.log('finally block at quiz')
         });
     }
+
+    const columns = [
+      {
+        title: 'SN',
+        dataIndex: '',
+        key: 'patient_name',
+        render: (text, record, index) =>  (pagination.page - 1) * pagination.pageSize + index+1,
+      },
+      {
+        title: 'Name',
+        dataIndex: 'user_name',
+        key: 'name',
+      },
+      {
+        title: 'UserName',
+        dataIndex: 'user_username',
+        key: 'username',
+      },
+      {
+        title: 'Score',
+        dataIndex: 'score',
+        key: 'score',
+      },
+   ]
 
     const onOptionChange = (key_id, value) => {
         ans[key_id] = value
@@ -109,8 +135,8 @@ import Request from '../api'
         return (
             <div style={{align: 'center', margin: '100px'}}>
                 <h2> Your Score : {score}</h2>
-                    {scoreBoard.data.map((item, index) => (scorePage(item, index))) }
-               <Button type="primary" onClick={submitAnswer}>Submit Answer</Button>
+                <h2> Top Score List</h2>
+                    {state.data && <Table dataSource={scoreBoard.data} columns={columns} pagination={pagination}/>}
             </div>
         );
 
@@ -119,7 +145,7 @@ import Request from '../api'
             <div style={{align: 'center', margin: '100px'}}>
                 <h2> Quiz Questions</h2>
                     {state.data.map((ques, index) => (questionPage(ques, index))) }
-
+               <br/>
                <Button type="primary" onClick={submitAnswer}>Submit Answer</Button>
             </div>
         );
