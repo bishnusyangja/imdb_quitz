@@ -140,7 +140,7 @@ class ScoreView(BaseView):
 
     def get_paginated_query(self, qs):
         start, end = self.get_query_limit()
-        return qs[start, end]
+        return qs[start: end]
 
     def get_field_value(self, item, field):
         fields = field.split('.')
@@ -157,7 +157,7 @@ class ScoreView(BaseView):
         return [{field.replace('.', '_'): self.get_field_value(item, field) for field in self.field_items} for item in qs]
 
     def get_queryset(self):
-        qs = Quiz.query.options(joinedload(Quiz.user)).all().order_by(desc(Quiz.score))
+        qs = Quiz.query.options(joinedload(Quiz.user)).order_by(desc(Quiz.score)).all()
         qs = self.get_paginated_query(qs)
         return qs
 

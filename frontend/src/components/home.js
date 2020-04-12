@@ -45,6 +45,8 @@ import Request from '../api'
         Request().post('/quiz/'+quiz_id+'/', ans)
           .then((response) => {
             setScore(response.data.score);
+            setSubmitted(true);
+            getScoreBoard();
           })
           .catch((error) => {
             console.log("error in quiz submission")
@@ -59,7 +61,7 @@ import Request from '../api'
     }
 
     const getScoreBoard = () => {
-        Request().get('/quiz/')
+        Request().get('/score/list/')
           .then((response) => {
             setScoreBoard({data: response.data});
           })
@@ -99,11 +101,11 @@ import Request from '../api'
 
     const scorePage = (obj, index) => {
         return <>
-            <div style={{marginTop: '20px'}}><h2>{index+1}. {obj.question} </h2></div>
+            <div style={{marginTop: '20px'}}><h3>{index+1} {obj.user_name} {obj.user_username} {obj.score} </h3></div>
         </>
     }
 
-    if (is_submitted){
+    if (is_submitted && scoreBoard.data){
         return (
             <div style={{align: 'center', margin: '100px'}}>
                 <h2> Your Score : {score}</h2>
