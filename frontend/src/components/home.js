@@ -7,6 +7,11 @@ import Request from '../api'
 
     const pagination = {pageSize: 10, page: 1};
 
+    useEffect(() => {
+        console.log("welcome");
+        getScoreBoard(1, pagination.pageSize);
+      }, []);
+
     const defaultAnswer = (data) => {
         let ans_obj = {}
         for (let i in data){
@@ -21,7 +26,7 @@ import Request from '../api'
 
     const [is_submitted, setSubmitted] = useState(false);
 
-    const [scoreBoard, setScoreBoard] = useState({data: null});
+    const [scoreBoard, setScoreBoard] = useState({data: null, count: 0});
 
     const [score, setScore] = useState(0);
 
@@ -47,7 +52,7 @@ import Request from '../api'
           .then((response) => {
             setScore(response.data.score);
             setSubmitted(true);
-            getScoreBoard();
+
           })
           .catch((error) => {
             console.log("error in quiz submission")
@@ -61,10 +66,10 @@ import Request from '../api'
         getQuiz(1, pagination.pageSize);
     }
 
-    const getScoreBoard = () => {
-        Request().get('/score/list/', {page_size: pagination.pageSize})
+    const getScoreBoard = (page, pageSize) => {
+        Request().get('/score/list/', {page: page, page_size: pageSize})
           .then((response) => {
-            setScoreBoard({data: response.data.results});
+            setScoreBoard({data: response.data.results, count: response.data.count});
           })
           .catch((error) => {
             console.log("error at quiz", error)
@@ -130,7 +135,8 @@ import Request from '../api'
     }
 
     const onPageChange = (page, pageSize) => {
-        getQuiz(page, pageSize);
+        console.log("page changed", Math.random())
+        getScoreBoard(page, pagination.pageSize);
     }
 
     if (is_submitted && scoreBoard.data){
@@ -141,7 +147,7 @@ import Request from '../api'
                     {scoreBoard.data && <Table dataSource={scoreBoard.data} columns={columns} pagination={false}/>}
                     <Pagination defaultCurrent={1}
                               pageSize={pagination.pageSize}
-                              total={state.count}
+                              total={scoreBoard.count}
                               onChange={onPageChange}/>
             </div>
         );
