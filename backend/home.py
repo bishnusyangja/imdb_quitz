@@ -7,6 +7,8 @@ from flask import make_response, jsonify
 
 
 def home():
-    # load_content_to_db.delay()
+    from task import load_content_to_db
+    from task import abc
+    abc.delay()
     data = {"home": "Hello World"}
     return make_response(jsonify(data), 200)
