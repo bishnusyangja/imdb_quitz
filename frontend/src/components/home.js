@@ -17,12 +17,12 @@ import Request from '../api'
 
     const [state, setState] = useState({
         data:[
-            {question: 'Which of the following is abc ? ', key_id: '', option1: 'a dfaf', optin2: 'b dfadf', option3: 'c fdfadf', option4: 'd eeee'},
-            {question: 'Which of the following is dfdaf ? ', key_id: '', option1: 'a dfaf', optin2: 'b dfadf', option3: 'c ddd', option4: 'd dfafd'},
-            {question: 'Which of the following is aaaaabc ? ', key_id: '', option1: 'a rrr', optin2: 'b 000', option3: 'c ert', option4: 'd rrr'},
-            {question: 'Which of the following is vvvv ? ', key_id: '', option1: 'a yyyy', optin2: 'b ooo', option3: 'c fdfadf', option4: 'd gggg'},
-            {question: 'Which of the following is eeee ? ', key_id: '', option1: 'a tttt', optin2: 'b ccc', option3: 'c fdfadf', option4: 'd dfafd'},
-            {question: 'Which of the following is rrrr ? ', key_id: '', option1: 'a fdaf', optin2: 'b dfadf', option3: 'c fdfadf', option4: 'd rrr'}
+            {question: 'Which of the following is abc ? ', key_id: '', option1: 'a dfaf', option2: 'b dfadf', option3: 'c fdfadf', option4: 'd eeee'},
+            {question: 'Which of the following is dfdaf ? ', key_id: '', option1: 'a dfaf', optino2: 'b dfadf', option3: 'c ddd', option4: 'd dfafd'},
+            {question: 'Which of the following is aaaaabc ? ', key_id: '', option1: 'a rrr', option2: 'b 000', option3: 'c ert', option4: 'd rrr'},
+            {question: 'Which of the following is vvvv ? ', key_id: '', option1: 'a yyyy', option2: 'b ooo', option3: 'c fdfadf', option4: 'd gggg'},
+            {question: 'Which of the following is eeee ? ', key_id: '', option1: 'a tttt', option2: 'b ccc', option3: 'c fdfadf', option4: 'd dfafd'},
+            {question: 'Which of the following is rrrr ? ', key_id: '', option1: 'a fdaf', option2: 'b dfadf', option3: 'c fdfadf', option4: 'd rrr'}
         ], start: true
     });
 
@@ -128,9 +128,9 @@ import Request from '../api'
     };
 
     const questionPage = (obj, index) => {
-        return<> <div style={{marginTop: '40px'}}><h2>{index+1}. {obj.question} </h2></div>
+        return<> <div style={{marginTop: '40px'}} key={ans[obj.key_id]}><h2>{index+1}. {obj.question} </h2></div>
             <Radio.Group onChange={(e) => { onOptionChange(obj.key_id, e.target.value) }}
-                    value={ans[obj.key_id]}>
+                    value={ans[obj.key_id]} >
                 <Radio style={radioStyle} value='option1' > {obj.option1} </Radio>
                 <Radio style={radioStyle} value='option2' > {obj.option2} </Radio>
                 <Radio style={radioStyle} value='option3' > {obj.option3} </Radio>
