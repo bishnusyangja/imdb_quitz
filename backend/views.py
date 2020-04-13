@@ -76,9 +76,8 @@ class BaseView:
             self.page_size = int(page_size)
         except Exception as exc:
             pass
-
-        start = (page - 1) * page_size
-        end = page_size * page
+        start = (self.page - 1) * self.page_size
+        end = self.page_size * self.page
         return start, end
 
     def get_paginated_query(self, qs):

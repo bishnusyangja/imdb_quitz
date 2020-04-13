@@ -5,7 +5,7 @@ import Request from '../api'
 
  const HomePage = () => {
 
-    const pagination = {pageSize: 5, page: 1};
+    const pagination = {pageSize: 10, page: 1};
 
     const defaultAnswer = (data) => {
         let ans_obj = {}

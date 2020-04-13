@@ -99,18 +99,19 @@ class QuizView(BaseView):
 
     def get_quiz_attempted(self):
         quiz_attempted = Quiz.query.filter_by(user_id=self.user.id).count()
-        # return quiz_attempted
-        return 0
+        return quiz_attempted
 
     def evaluate_quiz(self, quiz):
         score = 0
         qs = Question.query.filter_by(quiz_id=self.quiz_id).all()
-        ans_dict = {item.key_id: item.right_answer for item in qs}
+        ans_dict = {item.key_id: {'answer': item.right_answer, 'id': item.id} for item in qs}
         update_list = []
         for ques, ans in quiz.items():
-            if ans and ans_dict.get(ques) == ans.strip():
-                score += 1
-            update_list.append({'id': ques.id, 'answered': ans})
+            if ques and ans and ans_dict.get(ques):
+                update_list.append({'id': ans_dict.get(ques).get('id'), 'answered': ans})
+                if ans_dict.get(ques) and ans_dict.get(ques).get('answer') == ans.strip():
+                    score += 1
+        print(update_list)
         db.session.bulk_update_mappings(Question, update_list)
         return score
 
