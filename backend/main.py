@@ -4,7 +4,6 @@ from os.path import dirname
 
 from celery import Celery
 
-from settings import DB_PATH, DB_NAME
 
 root_path = dirname(os.path.abspath(__file__))
 sys.path.append(os.path.join(root_path))
@@ -14,8 +13,8 @@ from urls import get_flask_app
 
 app = get_flask_app()
 app.config.update(
-    CELERY_BROKER_URL='redis://127.0.0.1:6379/5',
-    CELERY_RESULT_BACKEND='redis://127.0.0.1:6379/5',
+    CELERY_BROKER_URL='redis://127.0.0.1:6379',
+    CELERY_RESULT_BACKEND='redis://127.0.0.1:6379',
     # CELERY_BACKEND_URL='redis://127.0.0.1:6379/5',
     # CELERY_BACKEND_URL='http://localhost:5000'
 )
