@@ -1,2 +1,2 @@
 #! /bin/bash
-celery worker -A main.celery --loglevel=info
+celery worker -A celery_app.celery --loglevel=info

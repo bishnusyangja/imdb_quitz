@@ -2,7 +2,6 @@ from flask import request, make_response, jsonify
 
 from helpers import truncate_line, get_random_string
 from models import db, User, UserToken, ImdbContent
-from task import load_content_to_db
 from views import BaseView
 
 
