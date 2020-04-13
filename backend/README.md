@@ -9,6 +9,7 @@ flask app for quitz gaming
 - install requirements using `pip install -r requirements.txt` inside your virtual environment
 - run the file as `bash run.sh` to run the project
 - run the file as `bash celery.sh` to run background task
+- run `python migrate.py` to load schema in database
  
  
  ### For FrontEnd

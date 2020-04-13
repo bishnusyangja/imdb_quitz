@@ -113,7 +113,7 @@ import Request from '../api'
         return<div key={obj.key_id}>
             <div style={{marginTop: '40px'}}><h2>{index+1}. {obj.question} </h2></div>
             <Radio.Group onChange={(e) => { onOptionChange(obj.key_id, e.target.value) }}
-                    value={ans[obj.key_id]}>
+                    defaultValue={ans[obj.key_id]}>
                 <Radio style={radioStyle} value='option1' checked={ans[obj.key_id]=='option1'} > {obj.option1} </Radio>
                 <Radio style={radioStyle} value='option2' checked={ans[obj.key_id]=='option2'} > {obj.option2} </Radio>
                 <Radio style={radioStyle} value='option3' checked={ans[obj.key_id]=='option3'} > {obj.option3} </Radio>

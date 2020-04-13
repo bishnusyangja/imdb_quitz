@@ -16,7 +16,7 @@ def load_content_to_db():
     objects = [ImdbContent(**item) for item in data]
     s.bulk_save_objects(objects)
     s.commit()
-    # return True
+    return True
 
 
 @celery.task
@@ -27,6 +27,6 @@ def abc():
     b = 3
     print('a+b =', a+b)
     logger.info('a+b =', a+b)
-    # return True
+    return True
 
 
