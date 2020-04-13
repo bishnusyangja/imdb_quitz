@@ -31,3 +31,4 @@ def abc():
     return True
 
 
+from celery.worker import consumer
