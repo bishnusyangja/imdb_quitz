@@ -111,7 +111,6 @@ class QuizView(BaseView):
                 update_list.append({'id': ans_dict.get(ques).get('id'), 'answered': ans})
                 if ans_dict.get(ques) and ans_dict.get(ques).get('answer') == ans.strip():
                     score += 1
-        print(update_list)
         db.session.bulk_update_mappings(Question, update_list)
         return score
 

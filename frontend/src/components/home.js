@@ -42,7 +42,7 @@ import Request from '../api'
     }
 
     const submitAnswer = () => {
-        let quiz_id = 1;
+        let quiz_id = state.data[0].quiz_id;
         Request().post('/quiz/'+quiz_id+'/', ans)
           .then((response) => {
             setScore(response.data.score);
@@ -138,7 +138,7 @@ import Request from '../api'
             <div style={{align: 'center', margin: '100px'}}>
                 <h2> Your Score : {score}</h2>
                 <h2> Top Score List</h2>
-                    {state.data && <Table dataSource={scoreBoard.data} columns={columns} pagination={false}/>}
+                    {scoreBoard.data && <Table dataSource={scoreBoard.data} columns={columns} pagination={false}/>}
                     <Pagination defaultCurrent={1}
                               pageSize={pagination.pageSize}
                               total={state.count}

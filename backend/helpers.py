@@ -39,7 +39,7 @@ def get_options_from_content(content, right_number=None):
     right_number = random.choice(range(4)) + 1 if right_number is None else right_number
     params = {f'option{right_number}': content.winner}
     right_assigned = False
-    right_option = ''
+    right_option = f'option{right_number}'
     for i in range(3):
         if i + 1 == right_number:
             right_assigned = True
