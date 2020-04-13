@@ -16,7 +16,7 @@ import Request from '../api'
     }
 
     const [state, setState] = useState({
-        data:null, start: false
+        data:null, start: false, count: 0
     });
 
     const [is_submitted, setSubmitted] = useState(false);
@@ -27,10 +27,10 @@ import Request from '../api'
 
     const [ans, setAnswer] = useState({});
 
-    const getQuiz = () => {
-        Request().get('/quiz/')
+    const getQuiz = (page, pageSize) => {
+        Request().get('/quiz/', {page: page, page_size: pageSize})
           .then((response) => {
-            setState({data: response.data.results, start: true});
+            setState({data: response.data.results, count: response.data.count, start: true});
             setAnswer(defaultAnswer(response.data));
           })
           .catch((error) => {
@@ -58,7 +58,7 @@ import Request from '../api'
     }
 
     const startQuiz = () => {
-        getQuiz();
+        getQuiz(1, pagination.pageSize);
     }
 
     const getScoreBoard = () => {
@@ -129,8 +129,8 @@ import Request from '../api'
         </>
     }
 
-    const onPageChange = () => {
-        console.log('page change');
+    const onPageChange = (page, pageSize) => {
+        getQuiz(page, pageSize);
     }
 
     if (is_submitted && scoreBoard.data){
@@ -140,7 +140,8 @@ import Request from '../api'
                 <h2> Top Score List</h2>
                     {state.data && <Table dataSource={scoreBoard.data} columns={columns} pagination={false}/>}
                     <Pagination defaultCurrent={1}
-                              total={500}
+                              pageSize={pagination.pageSize}
+                              total={state.count}
                               onChange={onPageChange}/>
             </div>
         );
