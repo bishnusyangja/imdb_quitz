@@ -9,7 +9,7 @@ import Request from '../api'
 
     useEffect(() => {
         console.log("welcome");
-        getScoreBoard(1, pagination.pageSize);
+//        getScoreBoard(1, pagination.pageSize);
       }, []);
 
     const defaultAnswer = (data) => {
