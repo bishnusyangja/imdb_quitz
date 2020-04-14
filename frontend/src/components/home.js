@@ -52,7 +52,7 @@ import Request from '../api'
           .then((response) => {
             setScore(response.data.score);
             setSubmitted(true);
-
+            getScoreBoard(1, pagination.pageSize);
           })
           .catch((error) => {
             console.log("error in quiz submission")
@@ -128,6 +128,13 @@ import Request from '../api'
       </div>
     }
 
+    const jumpToScoreBoard = (e) => {
+        e.preventDefault();
+        setSubmitted(true);
+        getScoreBoard(1, pagination.pageSize);
+
+    }
+
     const scorePage = (obj, index) => {
         return <>
             <div style={{marginTop: '20px'}}><h3>{index+1} {obj.user_name} {obj.user_username} {obj.score} </h3></div>
@@ -135,7 +142,7 @@ import Request from '../api'
     }
 
     const onPageChange = (page, pageSize) => {
-        console.log("page changed", Math.random())
+        console.log("on page change");
         getScoreBoard(page, pagination.pageSize);
     }
 
@@ -166,6 +173,7 @@ import Request from '../api'
             <div style={{align: 'center', margin: '100px'}}>
                 <h2>After you click the button you can not go back.</h2>
                 <Button type="primary" onClick={startQuiz}>Take The Movie Quiz</Button>
+                <Button style={{marginLeft: '20px'}} type="primary" onClick={jumpToScoreBoard}>View Score Board</Button>
             </div>
         );
   }
